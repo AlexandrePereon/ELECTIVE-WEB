@@ -1,7 +1,7 @@
 import React from "react";
 
 const Header = () => {
-    <div className="navbar bg-base-100">
+    return (<div className="navbar bg-base-100">
         <div className="flex-1">
             <a className="btn btn-ghost text-xl">daisyUI</a>
         </div>
@@ -41,7 +41,7 @@ const Header = () => {
             </ul>
             </div>
         </div>
-    </div>
+    </div>);
 }
 
 export default Header;

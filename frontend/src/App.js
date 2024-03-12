@@ -3,6 +3,9 @@ import axios from "axios";
 import "./App.scss";
 import AddTodo from "./components/AddTodo";
 import TodoList from "./components/TodoList";
+import Loader from "./components/Loader/loader";
+import Skeleton from "./components/Skeleton/skeleton";
+import Footer from "./components/Footer/footer";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -45,6 +48,10 @@ export default class App extends React.Component {
               <div className="todo-app">
                 <AddTodo handleAddTodo={this.handleAddTodo} />
                 <TodoList todos={this.state.todos} />
+                <Loader/>
+                {/* <Skeleton/> */}
+                <Footer/>
+
               </div>
             </div>
           </div>
