@@ -12,6 +12,9 @@ export default class TodoPage extends React.Component {
     }
   
     componentDidMount() {
+      // DECOMMENTER PR TRAVAILLER EN LOCAL
+      //axios.defaults.baseURL = 'http://localhost:4000';
+
       axios
         .get("/api")
         .then((response) => {
