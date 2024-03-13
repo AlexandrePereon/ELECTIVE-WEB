@@ -1,12 +1,12 @@
 import React from 'react'
-import axios from "axios";
+import axiosReq from "../../utlils/axios";
 
 const SignupForm = () => {
 
     const submitSignupForm = async (e,username,email,password,role) => {
         e.preventDefault();
         try {
-            const response = await axios.post("/api/register", {
+            const response = await axiosReq.post("/api/register", {
                 username: username,
                 email: email,
                 password: password,
