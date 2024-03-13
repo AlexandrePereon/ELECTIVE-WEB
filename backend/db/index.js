@@ -1,9 +1,6 @@
-/**
- * Created by Syed Afzal
- */
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-exports.connect = (app) => {
+export const connect = (app) => {
   const options = {
     useNewUrlParser: true,
     autoIndex: false, // Don't build indexes

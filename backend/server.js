@@ -1,19 +1,19 @@
-/**
- * Created by Syed Afzal
- */
-require("./config/config");
+import "./config/config.js";
+import express from "express";
+import path from "path";
+import cookieParser from "cookie-parser";
+import bodyParser from "body-parser";
+import cors from "cors";
+import { connect} from "./db/index.js";
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import routes from "./routes/index.js";
 
-const express = require("express");
-const path = require("path");
-const cookieParser = require("cookie-parser");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const db = require("./db");
-
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
 
 //connection from db here
-db.connect(app);
+connect(app);
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -22,7 +22,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 //  adding routes
-require("./routes")(app);
+routes(app);
 
 app.on("ready", () => {
   app.listen(3000, () => {
@@ -30,4 +30,4 @@ app.on("ready", () => {
   });
 });
 
-module.exports = app;
+export default app;

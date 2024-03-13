@@ -1,7 +1,10 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path, { dirname } from 'path';
+import { fileURLToPath, pathToFileURL } from 'url';
 
-module.exports = (app) => {
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+export default (app) => {
   // Lire tous les fichiers du dossier actuel
   fs.readdirSync(__dirname)
     .filter((file) => {
@@ -10,7 +13,8 @@ module.exports = (app) => {
     })
     .forEach((file) => {
       // Importer chaque fichier de route et l'exécuter avec l'instance app
-      const route = require(path.join(__dirname, file));
-      route(app);
+      import(pathToFileURL(path.join(__dirname, file))).then(route => {
+        route.default(app);
+      });
     });
 };
