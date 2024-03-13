@@ -3,8 +3,6 @@ services:
     build:
       context: frontend
       target: development
-    ports:
-      - 4000:4000
     stdin_open: true
     volumes:
       - ./frontend:/usr/src/app

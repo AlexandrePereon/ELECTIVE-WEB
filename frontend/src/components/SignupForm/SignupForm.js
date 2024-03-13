@@ -5,13 +5,14 @@ const SignupForm = () => {
 
     const submitSignupForm = async (e,username,email,password,role) => {
         e.preventDefault();
+        axios.defaults.baseURL = 'http://localhost:3000';
         try {
             const response = await axios.post("/api/register", {
                 username: username,
                 email: email,
                 password: password,
                 role: role
-            });
+            }); 
             console.log("Réponse du serveur :", response.data);
         } catch (error) {
             console.error("Erreur :", error);
