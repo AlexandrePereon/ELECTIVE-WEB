@@ -1,7 +1,8 @@
-const env = process.env.NODE_ENV_PROFILE || "local";
+import config from './config.json' assert { type: 'json' };
 
-if (env === "production" || env === "test"|| env === "local") {
-  const config = require("./config.json");
+const env = process.env.NODE_ENV || "development";
+
+if (env === "development" || env === "test") {
   const envConfig = config[env];
   console.log("Profile utilisé : " + env);
   console.log(envConfig);
