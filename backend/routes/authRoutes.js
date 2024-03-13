@@ -1,5 +1,5 @@
 import express from 'express';
-import { authController } from '../controllers/authController.js';
+import authController from '../controllers/authController.js';
 
 const router = express.Router();
 
@@ -8,5 +8,5 @@ router.post('/register', authController.register);
 router.post('/login', authController.login);
 
 export default (app) => {
-  app.use("/api", router);
+  app.use('/api', router);
 };
