@@ -4,7 +4,6 @@ module.exports = {
     es2021: true,
   },
   extends: ['airbnb-base'],
-  plugins: ['prettier'],
   overrides: [
     {
       env: {
@@ -29,5 +28,6 @@ module.exports = {
     'linebreak-style': 0,
     'no-underscore-dangle': ['error', { allow: ['_id', '__dirname'] }],
     'no-console': 'off',
+    'max-len': 'off',
   },
 };
