@@ -1,17 +1,15 @@
 import fs from 'fs';
-import path, { dirname } from 'path';
-import { fileURLToPath, pathToFileURL } from 'url';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import express from 'express';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const router = express.Router();
 
-export default (app) => {
-  // Lire tous les fichiers du dossier actuel
-  fs.readdirSync(__dirname)
-    .filter((file) => file.endsWith('.js') && file !== 'index.js')
-    .forEach((file) => {
-      // Importer chaque fichier de route et l'exécuter avec l'instance app
-      import(pathToFileURL(path.join(__dirname, file))).then((route) => {
-        route.default(app);
-      });
-    });
-};
+fs.readdirSync(__dirname).forEach(async (file) => {
+  if (file === 'index.js') return; // ignore the index.js file
+  const route = await import(`./${file}`);
+  router.use(route.default);
+});
+
+export default router;

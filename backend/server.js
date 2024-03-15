@@ -22,7 +22,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 //  adding routes
-routes(app);
+app.use('/api', routes);
 
 app.on('ready', () => {
   app.listen(process.env.PORT, () => {
