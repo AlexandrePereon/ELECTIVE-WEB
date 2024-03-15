@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import request from 'supertest';
-import { before } from 'mocha';
+import { before, describe, it } from 'mocha';
 import app from '../server.js';
 import User from '../models/userModel.js';
 
