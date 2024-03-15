@@ -1,25 +1,35 @@
-import React from 'react'
+import React,{useState} from 'react'
 import axiosReq from "../../utils/axios";
+import Password from '../Password/password';
 
 const SignupForm = () => {
 
-    const submitSignupForm = async (e,username,email,password,role) => {
+    const [isPasswordValid,setIsPasswordValid] = useState(false);
+// console.log(isPasswordValid)
+
+    const handlesetIsPasswordValid = (isValid) => {
+        setIsPasswordValid(isValid)
+    }
+
+    const submitSignupForm = async (e) => {
         e.preventDefault();
         try {
             const response = await axiosReq.post("/api/register", {
-                username: username,
-                email: email,
-                password: password,
-                role: role
+                username: e.target.elements.firstname.value + " " + e.target.elements.lastname.value,
+                email: e.target.elements.email.value,
+                //password: e.target.elements.password.value,
+                role: e.target.elements.role.value
             }); 
             console.log("Réponse du serveur :", response.data);
         } catch (error) {
             console.error("Erreur :", error);
         }
     };
+    
+
      
   return (
-    <form style={{padding:'20%', paddingTop: '5%', paddingBottom:'5%'}} onSubmit={(e) => {submitSignupForm(e,'yanis', 'yanis@gmail.com','admin','user');console.log("ok psot")}}>
+    <form style={{padding:'20%', paddingTop: '5%', paddingBottom:'5%'}} onSubmit={(e) => {submitSignupForm(e)}}>
             <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight ">
                 Create an account
             </h2>
@@ -72,6 +82,7 @@ const SignupForm = () => {
                 </div>
 
                 <div className="sm:col-span-3">
+                <Password handlesetIsPasswordValid={handlesetIsPasswordValid}/>
                 <label htmlFor="role" className="block text-sm font-medium leading-6 ">
                     Role
                 </label>
@@ -97,6 +108,7 @@ const SignupForm = () => {
         <button
           type="submit"
           className="rounded-md bg-green-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            disabled={!isPasswordValid}
         >
           Save
         </button>
