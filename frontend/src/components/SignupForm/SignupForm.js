@@ -3,14 +3,15 @@ import axiosReq from "../../utils/axios";
 
 const SignupForm = () => {
 
-    const submitSignupForm = async (e,username,email,password,role) => {
+    const submitSignupForm = async (e) => {
         e.preventDefault();
+        console.log (e.target.elements.password.value)
         try {
             const response = await axiosReq.post("/api/register", {
-                username: username,
-                email: email,
-                password: password,
-                role: role
+                username: e.target.elements.firstName.value + " " + e.target.elements.lastName.value,
+                email: e.target.elements.email.value,
+                password: e.target.elements.password.value,
+                role: e.target.elements.role.value
             }); 
             console.log("Réponse du serveur :", response.data);
         } catch (error) {
@@ -19,7 +20,7 @@ const SignupForm = () => {
     };
      
   return (
-    <form style={{padding:'20%', paddingTop: '5%', paddingBottom:'5%'}} onSubmit={(e) => {submitSignupForm(e,'yanis', 'yanis@gmail.com','admin','user');console.log("ok psot")}}>
+    <form style={{padding:'20%', paddingTop: '5%', paddingBottom:'5%'}} onSubmit={(e) => submitSignupForm(e)}>
             <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight ">
                 Create an account
             </h2>
@@ -27,50 +28,62 @@ const SignupForm = () => {
             <h2 className="text-base font-semibold leading-2 ">Personal Information</h2>
             <div className="mt-1 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 <div className="sm:col-span-3">
-                <label htmlFor="first-name" className="block text-sm font-medium leading-6 ">
-                    First name
-                </label>
-                <div className="mt-2">
-                    <input
-                    type="text"
-                    name="first-name"
-                    id="first-name"
-                    autoComplete="given-name"
-                    className="block w-full rounded-md border-0 py-1.5  shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                </div>
+                    <label htmlFor="first-name" className="block text-sm font-medium leading-6 ">
+                        First name
+                    </label>
+                    <div className="mt-2">
+                        <input
+                        type="text"
+                        name="firstName"
+                        id="firstName"
+                        autoComplete="givenName"
+                        className="block w-full rounded-md border-0 py-1.5  shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        />
+                    </div>
                 </div>
 
                 <div className="sm:col-span-3">
-                <label htmlFor="last-name" className="block text-sm font-medium leading-6 ">
-                    Last name
-                </label>
-                <div className="mt-2">
-                    <input
-                    type="text"
-                    name="last-name"
-                    id="last-name"
-                    autoComplete="family-name"
-                    className="block w-full rounded-md border-0 py-1.5  shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
+                    <label htmlFor="last-name" className="block text-sm font-medium leading-6 ">
+                        Last name
+                    </label>
+                    <div className="mt-2">
+                        <input
+                        type="text"
+                        name="lastName"
+                        id="lastName"
+                        autoComplete="familyName"
+                        className="block w-full rounded-md border-0 py-1.5  shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        />
+                    </div>
                 </div>
-                </div>
-
                 <div className="sm:col-span-4">
-                <label htmlFor="email" className="block text-sm font-medium leading-6 ">
-                    Email address
-                </label>
-                <div className="mt-2">
-                    <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    className="block w-full rounded-md border-0 py-1.5  shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
+                    <label htmlFor="email" className="block text-sm font-medium leading-6 ">
+                        Email address
+                    </label>
+                    <div className="mt-2">
+                        <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        autoComplete="email"
+                        className="block w-full rounded-md border-0 py-1.5  shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        />
+                    </div>
                 </div>
+                <div className="sm:col-span-4">
+                    <label htmlFor="password" className="block text-sm font-medium leading-6 ">
+                        Password
+                    </label>
+                    <div className="mt-2">
+                        <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        autoComplete="password"
+                        className="block w-full rounded-md border-0 py-1.5  shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        />
+                    </div>
                 </div>
-
                 <div className="sm:col-span-3">
                 <label htmlFor="role" className="block text-sm font-medium leading-6 ">
                     Role
@@ -79,7 +92,7 @@ const SignupForm = () => {
                     <select
                     id="role"
                     name="role"
-                    autoComplete="role-name"
+                    autoComplete="roleName"
                     className="block w-full rounded-md border-0 py-1.5  shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                     >
                     <option>User</option>

@@ -1,6 +1,21 @@
 import React from "react";
+import axiosReq from "../../utils/axios";
 
 const LoginForm = () => {
+
+    const submitLoginForm = async (e,email,password) => {
+      e.preventDefault();
+      try {
+          const response = await axiosReq.post("/api/login", {
+              email: email,
+              password: password
+          }); 
+          console.log("Réponse du serveur :", response.data);
+      } catch (error) {
+          console.error("Erreur :", error);
+      }
+  };
+
     return(
               <>
                 <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -18,7 +33,7 @@ const LoginForm = () => {
                   </div>
           
                   <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                    <form className="space-y-6" action="#" method="POST">
+                    <form className="space-y-6" action="#" method="POST" onSubmit={(e)=>{submitLoginForm(e,"yanis@gmail","azer");console.log("login")}}>
                       <div>
                         <label htmlFor="email" className="block text-sm font-medium leading-6 ">
                           Email address
