@@ -1,7 +1,14 @@
-import React from 'react'
+import React,{useState} from 'react'
 import axiosReq from "../../utils/axios";
+import Password from '../Password/password';
 
 const SignupForm = () => {
+
+    const [isPasswordValid,setIsPasswordValid] = useState(false);
+
+    const handlesetIsPasswordValid = (isValid) => {
+        setIsPasswordValid(isValid)
+    }
 
     const submitSignupForm = async (e) => {
         e.preventDefault();
@@ -18,6 +25,8 @@ const SignupForm = () => {
             console.error("Erreur :", error);
         }
     };
+    
+
      
   return (
     <form style={{padding:'20%', paddingTop: '5%', paddingBottom:'5%'}} onSubmit={(e) => submitSignupForm(e)}>
@@ -85,6 +94,7 @@ const SignupForm = () => {
                     </div>
                 </div>
                 <div className="sm:col-span-3">
+                <Password handlesetIsPasswordValid={handlesetIsPasswordValid}/>
                 <label htmlFor="role" className="block text-sm font-medium leading-6 ">
                     Role
                 </label>
@@ -110,6 +120,7 @@ const SignupForm = () => {
         <button
           type="submit"
           className="rounded-md bg-green-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            disabled={!isPasswordValid}
         >
           Save
         </button>
