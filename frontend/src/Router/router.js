@@ -1,13 +1,12 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import "./App.scss";
-import HomePage from "./pages/homePage";
-import ProductPage from "./pages/productPage";
-import Error404 from "./pages/error404";
-import LoginForm from "./components/LoginForm/loginForm";
-import SignupForm from "./components/SignupForm/SignupForm";
+import HomePage from "../pages/homePage";
+import ProductPage from "../pages/productPage";
+import Error404 from "../pages/error404";
+import LoginForm from "../components/LoginForm/loginForm";
+import SignupForm from "../components/SignupForm/signupForm";
 
-const App = () => {
+const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
@@ -21,4 +20,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Router;
