@@ -12,11 +12,14 @@ services:
     restart: always
     depends_on:
       - backend
+      - traefik
     expose:
       - 4000
     labels:
-      - "traefik.http.routers.frontend.rule=Host(`front.localhost`)" # Définir la règle de routage
-      - "traefik.http.services.frontend.loadbalancer.server.port=4000" # Définir le port du service
+      - "traefik.http.routers.frontend.rule=Host(`app.localhost`) && PathPrefix(`/`)"
+      - "traefik.http.routers.frontend.service=frontend"
+      - "traefik.http.services.frontend.loadbalancer.server.port=4000"
+
 
   backend:
     restart: always
@@ -28,8 +31,7 @@ services:
       - /usr/src/app/node_modules
     depends_on:
       - mongo
-    networks:
-      - express-mongo
+      - traefik
     ports:
       - "3000:3000"
     expose: 
@@ -37,31 +39,28 @@ services:
     environment:
       - NODE_ENV_PROFILE=production
     labels:
-      - "traefik.http.routers.backend.rule=Host(`back.localhost`)" # Définir la règle de routage
+      - "traefik.http.routers.backend.rule=Host(`app.localhost`) && PathPrefix(`/api`)" # Définir la règle de routage pour l'API
       - "traefik.http.services.backend.loadbalancer.server.port=3000" # Définir le port du service
-    
+
   mongo:
     restart: always
     image: mongo:4.2.0
     volumes:
       - ./data:/data/db
-    networks:
-      - express-mongo
     ports:
       - "27017:27017"
     expose:
       - 27017
+    depends_on:
+      - traefik   
 
   traefik:
-    image: traefik:v2.5
+    image: traefik:v2.11
     command:
-      - --api.insecure=true # Active l'API Traefik en mode non sécurisé (pour les tests seulement)
-      - --providers.docker=true # Active la prise en charge des services Docker
+      - --api.insecure=true
+      - --providers.docker=true
     ports:
-      - "80:80" # Port pour le trafic HTTP
-      - "8080:8080" # Port pour l'API Traefik (facultatif)
+      - "80:80"
+      - "8080:8080"
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock # Montage du socket Docker pour accéder aux informations sur les conteneurs
-
-networks:
-  express-mongo:
+      - /var/run/docker.sock:/var/run/docker.sock
