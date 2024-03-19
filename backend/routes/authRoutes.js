@@ -1,7 +1,7 @@
 import express from 'express';
 import authController from '../controllers/authController.js';
 
-const router = express.Router();
+const authRouter = express.Router();
 
 /**
  * @swagger
@@ -58,7 +58,7 @@ const router = express.Router();
  *     security:
  *       - BearerAuth: []
  */
-router.post('/register', authController.register);
+authRouter.post('/register', authController.register);
 
 /**
  * @swagger
@@ -111,8 +111,6 @@ router.post('/register', authController.register);
  *     security:
  *       - BearerAuth: []
  */
-router.post('/login', authController.login);
+authRouter.post('/login', authController.login);
 
-export default (app) => {
-  app.use('/api', router);
-};
+export default authRouter;

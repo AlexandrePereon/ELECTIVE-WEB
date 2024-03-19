@@ -2,7 +2,7 @@ import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import express from 'express';
 
-const router = express.Router();
+const swaggerRouter = express.Router();
 
 // Swagger definition
 const swaggerOptions = {
@@ -15,7 +15,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: 'http://localhost:3000',
+        url: `http://localhost:${process.env.PORT}`,
       },
     ],
   },
@@ -23,6 +23,10 @@ const swaggerOptions = {
   apis: ['./routes/*.js'],
 };
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
+
+const customCss = `
+  .swagger-ui .topbar { display: none }
+`;
 
 /**
  * @swagger
@@ -34,8 +38,6 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
  *       name: Authorization
  *       description: Use a valid JWT token with the 'Bearer' prefix for authentication.
  */
-router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+swaggerRouter.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { customCss }));
 
-export default (app) => {
-  app.use('/api', router);
-};
+export default swaggerRouter;
