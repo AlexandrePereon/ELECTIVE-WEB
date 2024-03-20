@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { config } from 'dotenv';
 import crypto from 'crypto';
 import User from '../models/userModel.js';
@@ -25,8 +26,8 @@ const authController = {
       ? await User.findOne({ where: { partnerCode: req.body.partnerCode } })
       : null;
 
-    // If a partner code is provided but no partner is found, return an error
-    if (req.body.partnerCode && !partner) {
+    // If a partner code is provided but no partner is found or the partner have another role, return an error
+    if ((req.body.partnerCode && !partner) || (partner && partner.role !== req.body.role)) {
       return res.status(400).json({
         message: 'Invalid partner code',
       });
@@ -47,6 +48,7 @@ const authController = {
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       email: req.body.email,
+      role: req.body.role,
       password: hashedPassword,
       partnerCode,
       partnerId: partner?.id,
@@ -83,8 +85,8 @@ const authController = {
     user.lastLogin = new Date();
     await user.save();
 
-    // create and assign a token
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+    // create and assign a token with a timeout of 1 hour
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_TIMEOUT });
     return res.header('auth-token', token).json({ token });
   },
 };

@@ -45,6 +45,7 @@ module.exports = {
           model: 'users',
           key: 'id',
         },
+        onDelete: 'SET NULL',
       },
       last_login: {
         allowNull: true,
