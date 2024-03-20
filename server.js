@@ -19,7 +19,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 //  adding routes
-app.use('/api', routes);
+app.use('/auth', routes);
 
 app.listen(process.env.PORT, () => {
   console.log('Server is up on port', (process.env.PORT));

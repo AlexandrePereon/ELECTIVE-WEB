@@ -25,8 +25,8 @@ const authController = {
       ? await User.findOne({ where: { partnerCode: req.body.partnerCode } })
       : null;
 
-    // If a partner code is provided but no partner is found, return an error
-    if (req.body.partnerCode && !partner) {
+    // If a partner code is provided but no partner is found or the partner have another role, return an error
+    if ((req.body.partnerCode && !partner) || (partner && partner.role !== req.body.role)) {
       return res.status(400).json({
         message: 'Invalid partner code',
       });
@@ -47,6 +47,7 @@ const authController = {
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       email: req.body.email,
+      role: req.body.role,
       password: hashedPassword,
       partnerCode,
       partnerId: partner?.id,
