@@ -1,28 +1,49 @@
-// userModel.js
-import mongoose from 'mongoose';
+import sequelize from 'sequelize';
+import database from '../db/index.js';
 
-const User = mongoose.model('User', {
-  username: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
+const User = database.define('user', {
+  firstName: {
+    type: sequelize.STRING,
+    allowNull: false,
+  },
+  lastName: {
+    type: sequelize.STRING,
+    allowNull: false,
   },
   email: {
-    type: String,
-    required: true,
+    type: sequelize.STRING,
+    allowNull: false,
     unique: true,
-    trim: true,
   },
   password: {
-    type: String,
-    required: true,
+    type: sequelize.STRING,
+    allowNull: false,
   },
   role: {
-    type: String,
-    required: true,
-    enum: ['user', 'admin', 'moderator'],
-    default: 'user',
+    type: sequelize.STRING,
+    allowNull: false,
+    defaultValue: 'user',
+    validate: {
+      isIn: [['user', 'admin', 'superadmin']],
+    },
+  },
+  partnerCode: {
+    type: sequelize.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  partnerId: {
+    type: sequelize.INTEGER,
+    allowNull: true,
+    references: {
+      model: 'users',
+      key: 'id',
+    },
+    OnDelete: 'SET NULL',
+  },
+  lastLogin: {
+    type: sequelize.DATE,
+    allowNull: true,
   },
 });
 

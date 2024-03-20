@@ -15,7 +15,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: process.env.BASE_URI,      
+        url: process.env.BASE_URI,
       },
     ],
   },

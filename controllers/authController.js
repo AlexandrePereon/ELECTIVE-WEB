@@ -1,16 +1,17 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import { config } from 'dotenv';
+import crypto from 'crypto';
 import User from '../models/userModel.js';
+
+config();
 
 const authController = {
   // POST /auth/register
   register: async (req, res) => {
     // check if username or email already exists
     const userExists = await User.findOne({
-      $or: [
-        { username: req.body.username },
-        { email: req.body.email },
-      ],
+      where: { email: req.body.email },
     });
 
     if (userExists) {
@@ -19,19 +20,41 @@ const authController = {
       });
     }
 
+    // If a partner code is provided, find the partner
+    const partner = req.body.partnerCode
+      ? await User.findOne({ where: { partnerCode: req.body.partnerCode } })
+      : null;
+
+    // If a partner code is provided but no partner is found, return an error
+    if (req.body.partnerCode && !partner) {
+      return res.status(400).json({
+        message: 'Invalid partner code',
+      });
+    }
+
     // hash password
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
+    // generate partner code
+    let partnerCode;
+    do {
+      partnerCode = crypto.randomBytes(5).toString('hex'); // generate a new 10-character code
+      // eslint-disable-next-line no-await-in-loop
+    } while (await User.findOne({ where: { partnerCode } }));
+
     // create new user
     const user = new User({
-      username: req.body.username,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
       email: req.body.email,
       password: hashedPassword,
+      partnerCode,
+      partnerId: partner?.id,
     });
 
     try {
-      const savedUser = await user.save();
-      return res.json({ id: savedUser._id });
+      await user.save();
+      return res.status(200).json({ id: user.id });
     } catch (err) {
       return res.status(400).json({ message: err });
     }
@@ -56,10 +79,12 @@ const authController = {
       });
     }
 
-    const tempToken = 'tempToken';
+    // update last login
+    user.lastLogin = new Date();
+    await user.save();
 
     // create and assign a token
-    const token = jwt.sign({ _id: user._id }, tempToken);
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
     return res.header('auth-token', token).json({ token });
   },
 };

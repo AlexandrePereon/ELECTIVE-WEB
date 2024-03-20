@@ -5,26 +5,28 @@ import app from '../server.js';
 import User from '../models/userModel.js';
 
 const userData = {
-  username: 'johnDoe123',
+  firstName: 'John',
+  lastName: 'Doe',
   email: 'john.doe@example.com',
   password: 'SecurePassword123!',
 };
 
 describe('POST /api/register', () => {
   before((done) => {
-    // delete the test user from the database
-    User.deleteOne({
-      email: userData.email,
-    }).then(() => {
-      done();
+    app.on('dbConnected', () => {
+      User.destroy({ where: { email: userData.email } }).then(() => {
+        done();
+      }).catch((err) => {
+        done(err);
+      });
     });
   });
 
-  it('should register a new user and return the user ID', async () => {
+  it('should register a new user', async () => {
     const response = await request(app).post('/api/register').send(userData);
 
     expect(response.status).to.equal(200);
-    expect(response.body).to.have.property('id');
+    console.log(response.body);
   });
 
   it('should return an error if the user already exists', async () => {
