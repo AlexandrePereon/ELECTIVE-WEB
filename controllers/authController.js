@@ -1,6 +1,9 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import { config } from 'dotenv';
 import User from '../models/userModel.js';
+
+config();
 
 const authController = {
   // POST /auth/register
@@ -24,14 +27,15 @@ const authController = {
 
     // create new user
     const user = new User({
-      username: req.body.username,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
       email: req.body.email,
       password: hashedPassword,
     });
 
     try {
-      const savedUser = await user.save();
-      return res.json({ id: savedUser._id });
+      await user.save();
+      return res.status(200).json({ id: user.id });
     } catch (err) {
       return res.status(400).json({ message: err });
     }
@@ -56,10 +60,12 @@ const authController = {
       });
     }
 
-    const tempToken = 'tempToken';
+    // update last login
+    user.lastLogin = new Date();
+    await user.save();
 
     // create and assign a token
-    const token = jwt.sign({ _id: user._id }, tempToken);
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
     return res.header('auth-token', token).json({ token });
   },
 };
