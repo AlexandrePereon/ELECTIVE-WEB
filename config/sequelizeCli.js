@@ -4,7 +4,7 @@ config();
 
 export default {
   dialect: process.env.DB_DIALECT,
-  host: process.env.DB_HOST,
+  host: process.env.MYSQL_URI,
   database: process.env.DB_NAME,
   username: process.env.DB_USER,
   password: process.env.DB_PASS,
