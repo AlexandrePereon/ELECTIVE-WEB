@@ -12,6 +12,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
 
 // connection from db here
+
 connect(app);
 
 app.use(cors());
