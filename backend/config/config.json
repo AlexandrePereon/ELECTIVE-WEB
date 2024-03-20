@@ -5,10 +5,13 @@
   },
   "local":{
     "PORT": 3000,
-    "MONGODB_URI": "mongodb://localhost:27017/TodoApp"
+    "MONGODB_URI": "mongodb://localhost:27017/TodoApp",
+    "BASE_URI" : "http://localhost:3000"
+
   },
   "production":{
     "PORT": 3000,
-    "MONGODB_URI": "mongodb://mongo:27017/TodoApp"
+    "MONGODB_URI": "mongodb://mongo:27017/TodoApp",
+    "BASE_URI" : "http://app.localhost"
   }
 }
