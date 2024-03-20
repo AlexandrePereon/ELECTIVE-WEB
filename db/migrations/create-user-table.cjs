@@ -34,7 +34,11 @@ module.exports = {
           isIn: [['user', 'admin', 'superadmin']],
         },
       },
-      sponsor_id: {
+      partner_code: {
+        allowNull: true,
+        type: Sequelize.DataTypes.STRING,
+      },
+      partner_id: {
         allowNull: true,
         type: Sequelize.DataTypes.INTEGER,
         references: {
