@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { config } from 'dotenv';
 import crypto from 'crypto';
 import User from '../models/userModel.js';
@@ -84,8 +85,8 @@ const authController = {
     user.lastLogin = new Date();
     await user.save();
 
-    // create and assign a token
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+    // create and assign a token with a timeout of 1 hour
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_TIMEOUT });
     return res.header('auth-token', token).json({ token });
   },
 };
