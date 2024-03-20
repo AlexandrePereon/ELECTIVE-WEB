@@ -21,9 +21,12 @@ const authRouter = express.Router();
  *               - email
  *               - password
  *             properties:
- *               username:
+ *               firstName:
  *                 type: string
- *                 example: 'johnDoe123'
+ *                 example: 'john'
+ *               lastName:
+ *                 type: string
+ *                 example: 'Doe'
  *               email:
  *                 type: string
  *                 format: email
