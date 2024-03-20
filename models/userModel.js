@@ -47,4 +47,7 @@ const User = database.define('user', {
   },
 });
 
+// Constraints
+User.belongsTo(User, { as: 'Partner', foreignKey: 'partnerId', onDelete: 'SET NULL' });
+
 export default User;

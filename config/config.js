@@ -9,6 +9,7 @@ if (env === "production" || env === "test"|| env === "local") {
   console.log("Profil utilisé : " + env);
   console.log("Port : " + envConfig.PORT);
   console.log("BaseURL : " + envConfig.BASE_URI);
+  console.log("BaseENDPOINT : " + envConfig.BASE_ENDPOINT);
   console.log("---------------------------");
 
   Object.keys(envConfig).forEach((key) => {

@@ -5,7 +5,7 @@ const authRouter = express.Router();
 
 /**
  * @swagger
- * /api/register:
+ * /auth/register:
  *   post:
  *     summary: Register a new user
  *     description: This endpoint registers a new user by their firstName, lastName, email, and password. It checks if the email already exists to avoid duplicates. Upon successful registration, it returns the user's unique identifier.
@@ -36,6 +36,9 @@ const authRouter = express.Router();
  *                 type: string
  *                 format: password
  *                 example: 'SecurePassword123!'
+ *               role:
+ *                 type: string
+ *                 example: 'user'
  *               partnerCode:
  *                 type: string
  *                 example: ''
@@ -50,7 +53,7 @@ const authRouter = express.Router();
  *                 id:
  *                   type: string
  *                   description: The unique identifier of the newly registered user.
- *                   example: '507f1f77bcf86cd799439011'
+ *                   example: '1'
  *       400:
  *         description: Bad Request - Username or email already exists, or other validation errors
  *         content:
@@ -67,7 +70,7 @@ authRouter.post('/register', authController.register);
 
 /**
  * @swagger
- * /api/login:
+ * /auth/login:
  *   post:
  *     summary: Login a user
  *     description: This endpoint authenticates a user by their email and password. It checks if the user exists and if the password is correct. Upon successful authentication, it returns a JWT token.

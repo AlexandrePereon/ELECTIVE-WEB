@@ -9,12 +9,21 @@ const userData = {
   lastName: 'Doe',
   email: 'john.doe@example.com',
   password: 'SecurePassword123!',
+  role: 'user',
 };
 
-describe('POST /api/register', () => {
+const partnerData = {
+  firstName: 'Jane',
+  lastName: 'Doe',
+  email: 'jane.doe@example.com',
+  password: 'SecurePassword123!',
+  role: 'user',
+};
+
+describe('POST /auth/register', () => {
   before((done) => {
     app.on('dbConnected', () => {
-      User.destroy({ where: { email: userData.email } }).then(() => {
+      User.destroy({ where: { email: [userData.email, partnerData.email] } }).then(() => {
         done();
       }).catch((err) => {
         done(err);
@@ -23,23 +32,44 @@ describe('POST /api/register', () => {
   });
 
   it('should register a new user', async () => {
-    const response = await request(app).post('/api/register').send(userData);
+    const response = await request(app).post('/auth/register').send(userData);
 
     expect(response.status).to.equal(200);
     console.log(response.body);
   });
 
   it('should return an error if the user already exists', async () => {
-    const response = await request(app).post('/api/register').send(userData);
+    const response = await request(app).post('/auth/register').send(userData);
 
     expect(response.status).to.equal(400);
     expect(response.body).to.have.property('message');
   });
+
+  it('should return an error if the partner code is invalid', async () => {
+    const response = await request(app).post('/auth/register').send({
+      ...partnerData,
+      partnerCode: 'invalidCode',
+    });
+
+    expect(response.status).to.equal(400);
+    expect(response.body).to.have.property('message');
+  });
+
+  it('should register a new user with a partner code', async () => {
+    const user = await User.findOne({ where: { email: userData.email } });
+
+    const response = await request(app).post('/auth/register').send({
+      ...partnerData,
+      partnerCode: user.partnerCode,
+    });
+
+    expect(response.status).to.equal(200);
+  });
 });
 
-describe('POST /api/login', () => {
+describe('POST /auth/login', () => {
   it('should log in an existing user and return the user token', async () => {
-    const response = await request(app).post('/api/login').send({
+    const response = await request(app).post('/auth/login').send({
       email: userData.email,
       password: userData.password,
     });
@@ -49,7 +79,7 @@ describe('POST /api/login', () => {
   });
 
   it('should return an error if the user does not exist', async () => {
-    const response = await request(app).post('/api/login').send({
+    const response = await request(app).post('/auth/login').send({
       email: 'error@email.com',
       password: 'errorPassword',
     });
