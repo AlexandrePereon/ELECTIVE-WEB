@@ -9,23 +9,8 @@ COPY package.json /usr/src/app/package.json
 # COPY package-lock.json /usr/src/app/package-lock.json
 RUN npm install
 
-COPY . /usr/src/app
+COPY --chown=node:node . .
 
 EXPOSE 3000
 
-CMD [ "npm", "run", "dev" ]
-
-FROM development as dev-envs
-RUN <<EOF
-apt-get update
-apt-get install -y --no-install-recommends git
-EOF
-
-RUN <<EOF
-useradd -s /bin/bash -m vscode
-groupadd docker
-usermod -aG docker vscode
-EOF
-# install Docker tools (cli, buildx, compose)
-COPY --from=gloursdocker/docker / /
-CMD [ "npm", "run", "dev" ]
+CMD [ "node", "server.js" ]
