@@ -1,141 +1,41 @@
-## Compose sample application
+#### Snippet of backend(Node.js)`DockerFile`
 
-### Use with Docker Development Environments
+You will find this `DockerFile` file in the root directory of the project.
 
-You can open this sample in the Dev Environments feature of Docker Desktop version 4.12 or later.
-
-[Open in Docker Dev Environments <img src="../open_in_new.svg" alt="Open in Docker Dev Environments" align="top"/>](https://open.docker.com/dashboard/dev-envs?url=https://github.com/docker/awesome-compose/tree/master/react-express-mongodb)
-
-### React application with a NodeJS backend and a MongoDB database
-
-Project structure:
-```
-.
-├── backend
-│   ├── Dockerfile
-│   ...
-├── compose.yaml
-├── frontend
-│   ├── ...
-│   └── Dockerfile
-└── README.md
-```
-
-[_compose.yaml_](compose.yaml)
-```
-services:
-  frontend:
-    build:
-      context: frontend
-    ...
-    ports:
-      - 3000:3000
-    ...
-  server:
-    container_name: server
-    restart: always
-    build:
-      context: server
-      args:
-        NODE_PORT: 3000
-    ports:
-      - 3000:3000
-    ...
-    depends_on:
-      - mongo
-  mongo:
-    container_name: mongo
-    restart: always
-    ...
-```
-The compose file defines an application with three services `frontend`, `backend` and `db`.
-When deploying the application, docker compose maps port 3000 of the frontend service container to port 3000 of the host as specified in the file.
-Make sure port 3000 on the host is not already being in use.
-
-## Deploy with docker compose
-
-```
-$ docker compose up -d
-Creating network "react-express-mongodb_default" with the default driver
-Building frontend
-Step 1/9 : FROM node:13.13.0-stretch-slim
- ---> aa6432763c11
-...
-Successfully tagged react-express-mongodb_app:latest
-WARNING: Image for service app was built because it did not already exist. To rebuild this image you must use `docker-compose build` or `docker-compose up --build`.
-Creating frontend        ... done
-Creating mongo           ... done
-Creating app             ... done
+```bash
+FROM node:13.13.0-stretch-slim
+#Argument that is passed from docer-compose.yaml file
+ARG NODE_PORT
+#Echo the argument to check passed argument loaded here correctly
+RUN echo "Argument port is : $NODE_PORT"
+# Create app directory
+WORKDIR /usr/src/app
+#COPY . .
+COPY . .
+# Install app dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (npm@5+)
+RUN npm install
+#In my case my app binds to port NODE_PORT so you'll use the EXPOSE instruction to have it mapped by the docker daemon:
+EXPOSE ${NODE_PORT}
+CMD npm run dev
 ```
 
-## Expected result
+##### Explanation of backend(Node.js) `DockerFile`
 
-Listing containers must show containers running and the port mapping as below:
-```
-$ docker ps
-CONTAINER ID        IMAGE                               COMMAND                  CREATED             STATUS                  PORTS                      NAMES
-06e606d69a0e        react-express-mongodb_server        "docker-entrypoint.s…"   23 minutes ago      Up 23 minutes           0.0.0.0:3000->3000/tcp     server
-ff56585e1db4        react-express-mongodb_frontend      "docker-entrypoint.s…"   23 minutes ago      Up 23 minutes           0.0.0.0:3000->3000/tcp     frontend
-a1f321f06490        mongo:4.2.0                         "docker-entrypoint.s…"   23 minutes ago      Up 23 minutes           0.0.0.0:27017->27017/tcp   mongo
-```
+- The first line tells Docker to use another Node image from the [DockerHub](https://hub.docker.com/). We’re using the official Docker image for Node.js and it’s version 10 image.
 
-After the application starts, navigate to `http://localhost:3000` in your web browser.
+- On second line we declare argument `NODE_PORT` which we will pass it from `docker-compose`.
 
-![page](./output.png)
+- On third line we log to check argument is successfully read 
 
-Stop and remove the containers
-```
-$ docker compose down
-Stopping server   ... done
-Stopping frontend ... done
-Stopping mongo    ... done
-Removing server   ... done
-Removing frontend ... done
-Removing mongo    ... done
-```
+- On fourth line we sets a working directory from where the app code will live inside the Docker container.
 
-##### Explanation of `docker-compose`
+- On fifth line, we are copying/bundling our code working directory into container working directory on line three.
 
-__Version__
+- On line seven, we run npm install for dependencies in container on line four.
 
-The first line defines the version of a file. It sounds confusing :confused:. What is meant by version of file ?? 
+- On Line eight, we setup the port, that Docker will expose when the container is running. In our case it is the port which we define inside `.env` file, read it from `docker-compose` then passed as a argument to the (backend)`DockerFile`.
 
-:pill: The Compose file is a YAML file defining services, networks, and volumes for a Docker application. So it is only a version of describing compose.yaml file. There are several versions of the Compose file format – 1, 2, 2.x, and 3.x.
-
-__Services__
-
-Our main goal to create a containers, it starts from here. As you can see there are three services(Docker images): 
-- First is __frontend__ 
-- Second is __server__ which is __backend - Express(NodeJS)__. I used a name server here, it's totally on you to name it __backend__.
-- Third is __mongo__ which is db __MongoDB__.
-
-##### Service app (backend - NodeJS)
-
-We make image of app from our `Dockerfile`, explanation below.
-
-__Explanation of service server__
-
-- Defining a **nodejs** service as __server__.
-- We named our **node server** container service as **server**. Assigning a name to the containers makes it easier to read when there are lot of containers on a machine, it can also avoid randomly generated container names. (Although in this case, __container_name__ is also __server__, this is merely personal preference, the name of the service and container do not have to be the same.) 
-- Docker container starts automatically if its fails.
-- Building the __server__ image using the Dockerfile from the current directory and passing an argument to the
-backend(server) `DockerFile`.
-- Mapping the host port to the container port.
-
-##### Service mongo
-
-We add another service called **mongo** but this time instead of building it from `DockerFile` we write all the instruction here directly. We simply pull down the standard __mongo image__ from the [DockerHub](https://hub.docker.com/) registry as we have done it for Node image.
-
-__Explanation of service mongo__
-
-- Defining a **mongodb** service as __mongo__.
-- Pulling the mongo 4.2.0 image image again from [DockerHub](https://hub.docker.com/).
-- Mount our current db directory to container. 
-- For persistent storage, we mount the host directory ( just like I did it in **Node** image inside `DockerFile` to reflect the changes) `/data` ( you need to create a directory in root of your project in order to save changes to locally as well) to the container directory `/data/db`, which was identified as a potential mount point in the `mongo Dockerfile` we saw earlier.
-- Mounting volumes gives us persistent storage so when starting a new container, Docker Compose will use the volume of any previous containers and copy it to the new container, ensuring that no data is lost.
-- Finally, we link/depends_on the app container to the mongo container so that the mongo service is reachable from the app service.
-- In last mapping the host port to the container port.
-
-:key: `If you wish to check your DB changes on your local machine as well. You should have installed MongoDB locally, otherwise you can't access your mongodb service of container from host machine.` 
-
-:white_check_mark: You should check your __mongo__ version is same as used in image. You can see the version of __mongo__ image in `docker-compose `file, I used __image: mongo:4.2.0__. If your mongo db version on your machine is not same then furst you have to updated your  local __mongo__ version in order to works correctly.
+- And in last, we tell docker to execute our app inside the container by using node to run `npm run dev. It is the command which I registered in __package.json__ in script section.
+###### :clipboard: `Note: For development purpose I used __nodemon__ , If you need to deploy at production you should change CMD from __npm run dev__ to __npm start__.`
