@@ -8,7 +8,7 @@ const authRouter = express.Router();
  * /api/register:
  *   post:
  *     summary: Register a new user
- *     description: This endpoint registers a new user by their username, email, and password. It checks if the username or email already exists to avoid duplicates. Upon successful registration, it returns the user's unique identifier.
+ *     description: This endpoint registers a new user by their firstName, lastName, email, and password. It checks if the email already exists to avoid duplicates. Upon successful registration, it returns the user's unique identifier.
  *     tags: [Authentication]
  *     requestBody:
  *       required: true
@@ -17,7 +17,8 @@ const authRouter = express.Router();
  *           schema:
  *             type: object
  *             required:
- *               - username
+ *               - firstName
+ *               - lastName
  *               - email
  *               - password
  *             properties:
@@ -35,6 +36,9 @@ const authRouter = express.Router();
  *                 type: string
  *                 format: password
  *                 example: 'SecurePassword123!'
+ *               partnerCode:
+ *                 type: string
+ *                 example: ''
  *     responses:
  *       200:
  *         description: Successfully registered the new user
@@ -58,8 +62,6 @@ const authRouter = express.Router();
  *                   type: string
  *                   description: Detailed error message.
  *                   example: 'Username or email already exists'
- *     security:
- *       - BearerAuth: []
  */
 authRouter.post('/register', authController.register);
 
@@ -111,8 +113,6 @@ authRouter.post('/register', authController.register);
  *                   type: string
  *                   description: Error message indicating either the username or password is incorrect.
  *                   example: 'Username or password is incorrect'
- *     security:
- *       - BearerAuth: []
  */
 authRouter.post('/login', authController.login);
 

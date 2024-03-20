@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { config } from 'dotenv';
+import crypto from 'crypto';
 import User from '../models/userModel.js';
 
 config();
@@ -10,10 +11,7 @@ const authController = {
   register: async (req, res) => {
     // check if username or email already exists
     const userExists = await User.findOne({
-      $or: [
-        { username: req.body.username },
-        { email: req.body.email },
-      ],
+      where: { email: req.body.email },
     });
 
     if (userExists) {
@@ -22,8 +20,27 @@ const authController = {
       });
     }
 
+    // If a partner code is provided, find the partner
+    const partner = req.body.partnerCode
+      ? await User.findOne({ where: { partnerCode: req.body.partnerCode } })
+      : null;
+
+    // If a partner code is provided but no partner is found, return an error
+    if (req.body.partnerCode && !partner) {
+      return res.status(400).json({
+        message: 'Invalid partner code',
+      });
+    }
+
     // hash password
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+    // generate partner code
+    let partnerCode;
+    do {
+      partnerCode = crypto.randomBytes(5).toString('hex'); // generate a new 10-character code
+      // eslint-disable-next-line no-await-in-loop
+    } while (await User.findOne({ where: { partnerCode } }));
 
     // create new user
     const user = new User({
@@ -31,6 +48,8 @@ const authController = {
       lastName: req.body.lastName,
       email: req.body.email,
       password: hashedPassword,
+      partnerCode,
+      partnerId: partner?.id,
     });
 
     try {

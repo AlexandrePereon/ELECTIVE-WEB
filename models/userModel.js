@@ -27,13 +27,19 @@ const User = database.define('user', {
       isIn: [['user', 'admin', 'superadmin']],
     },
   },
-  sponsorId: {
+  partnerCode: {
+    type: sequelize.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  partnerId: {
     type: sequelize.INTEGER,
     allowNull: true,
     references: {
       model: 'users',
       key: 'id',
     },
+    OnDelete: 'SET NULL',
   },
   lastLogin: {
     type: sequelize.DATE,
