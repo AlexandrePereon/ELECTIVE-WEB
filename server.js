@@ -16,7 +16,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, 'public')));
 
 //  adding routes
 app.use(process.env.BASE_ENDPOINT, routes);
@@ -26,12 +25,11 @@ const connectWithRetry = async () => {
     await database.authenticate();
     console.log('Database connected');
 
-    app.emit('dbConnected');
-
     // Migrate if there are any pending migrations
     database.sync()
       .then(() => {
         console.log('Database migrated');
+        app.emit('dbReady');
       })
       .catch((err) => {
         console.error('Unable to migrate:', err);
