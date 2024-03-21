@@ -1,11 +1,8 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { config } from 'dotenv';
+import '../config/config.js';
 import crypto from 'crypto';
 import User from '../models/userModel.js';
-
-config();
 
 const authController = {
   // POST /auth/register

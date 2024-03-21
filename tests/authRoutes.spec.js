@@ -22,7 +22,7 @@ const partnerData = {
 
 describe('POST /auth/register', () => {
   before((done) => {
-    app.on('dbConnected', () => {
+    app.on('dbReady', () => {
       User.destroy({ where: { email: [userData.email, partnerData.email] } }).then(() => {
         done();
       }).catch((err) => {
