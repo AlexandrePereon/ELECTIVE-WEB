@@ -89,7 +89,7 @@ const authController = {
   verify: async (req, res) => {
     // check if the route is public
     const url = req.originalUrl;
-    const publicRoutes = ['/auth/register', '/auth/login'];
+    const publicRoutes = ['/auth/register', '/auth/login', '/restaurant/api-docs'];
     if (publicRoutes.includes(url)) {
       return res.status(200).send();
     }
