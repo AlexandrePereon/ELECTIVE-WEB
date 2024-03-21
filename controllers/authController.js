@@ -89,6 +89,23 @@ const authController = {
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_TIMEOUT });
     return res.header('auth-token', token).json({ token });
   },
+  verify: async (req, res) => {
+    const token = req.header('auth-token');
+    if (!token) {
+      return res.status(401).json({
+        message: 'Access denied',
+      });
+    }
+
+    try {
+      const verified = jwt.verify(token, process.env.JWT_SECRET);
+      return res.status(200).json(verified);
+    } catch (err) {
+      return res.status(400).json({
+        message: 'Invalid token',
+      });
+    }
+  },
 };
 
 export default authController;

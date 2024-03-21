@@ -119,4 +119,13 @@ authRouter.post('/register', authController.register);
  */
 authRouter.post('/login', authController.login);
 
+/**
+ * @swagger
+ * /auth/verify:
+ *   post:
+ *     summary: Verify a user token
+ *     description: This endpoint verifies a user token by checking if it is valid and not expired. It returns the decoded token if it is valid.
+ */
+authRouter.post('/verify', authController.verify);
+
 export default authRouter;
