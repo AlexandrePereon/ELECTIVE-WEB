@@ -87,6 +87,7 @@ const authController = {
     return res.header('auth-token', token).json({ token });
   },
   verify: async (req, res) => {
+    console.log('verify');
     // check if the route is public
     const url = req.originalUrl;
     const publicRoutes = ['/auth/register', '/auth/login', '/restaurant/api-docs'];
