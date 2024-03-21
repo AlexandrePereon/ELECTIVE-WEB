@@ -21,17 +21,31 @@ app.use(express.static(path.join(__dirname, 'public')));
 //  adding routes
 app.use(process.env.BASE_ENDPOINT, routes);
 
+const connectWithRetry = async () => {
+  try {
+    await database.authenticate();
+    console.log('Database connected');
+
+    app.emit('dbConnected');
+
+    // Migrate if there are any pending migrations
+    database.sync()
+      .then(() => {
+        console.log('Database migrated');
+      })
+      .catch((err) => {
+        console.error('Unable to migrate:', err);
+      });
+  } catch (error) {
+    console.log('Unable to connect to the database');
+    console.log('Retrying in 5 seconds...');
+    setTimeout(connectWithRetry, 5000);
+  }
+};
+
 app.listen(process.env.PORT, () => {
   console.log('Server is up on port', (process.env.PORT));
-  database.authenticate()
-    .then(() => {
-      console.log('Database connected');
-
-      app.emit('dbConnected');
-    })
-    .catch((err) => {
-      console.error('Unable to connect to the database:', err);
-    });
+  connectWithRetry();
 });
 
 export default app;
