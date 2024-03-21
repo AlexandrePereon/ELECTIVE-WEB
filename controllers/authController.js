@@ -82,17 +82,20 @@ const authController = {
     user.lastLogin = new Date();
     await user.save();
 
-    const userId = user.id;
-
     // create and assign a token with a timeout of 1 hour
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_TIMEOUT });
     return res.header('auth-token', token).json({ token });
   },
   verify: async (req, res) => {
+    // check if the route is public
+    const url = req.originalUrl;
+    const publicRoutes = ['/auth/register', '/auth/login'];
+    if (publicRoutes.includes(url)) {
+      return res.status(200).send();
+    }
+
     // check if token is provided
     const token = req.headers.authorization;
-
-    // if no token is provided, return an error
     if (!token) {
       return res.status(401).json({
         message: 'Access denied',
@@ -105,7 +108,6 @@ const authController = {
 
       // get the user
       const user = await User.findByPk(verified.id);
-      console.log(JSON.stringify(user));
 
       // Set the useful information in the header
       const userHeader = {
