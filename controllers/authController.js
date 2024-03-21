@@ -82,8 +82,10 @@ const authController = {
     user.lastLogin = new Date();
     await user.save();
 
+    const userId = user.id;
+
     // create and assign a token with a timeout of 1 hour
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_TIMEOUT });
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_TIMEOUT });
     return res.header('auth-token', token).json({ token });
   },
   verify: async (req, res) => {
@@ -100,6 +102,24 @@ const authController = {
     try {
       // verify the token
       const verified = jwt.verify(token, process.env.JWT_SECRET);
+
+      // get the user
+      const user = await User.findByPk(verified.id);
+      console.log(JSON.stringify(user));
+
+      // Set the useful information in the header
+      const userHeader = {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        partnerCode: user.partnerCode,
+      };
+
+      // Add user information to the header
+      res.setHeader('X-User', JSON.stringify(userHeader));
+
       return res.status(200).json(verified);
     } catch (err) {
       return res.status(400).json({
