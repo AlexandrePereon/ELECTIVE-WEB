@@ -87,23 +87,26 @@ const authController = {
     return res.header('auth-token', token).json({ token });
   },
   verify: async (req, res) => {
-    console.log('verify');
+    console.log('verify1');
     // check if the route is public
     const url = req.originalUrl;
     const publicRoutes = ['/auth/register', '/auth/login', '/restaurant/api-docs'];
     if (publicRoutes.includes(url)) {
+      console.log('verify2');
       return res.status(200).send();
     }
 
     // check if token is provided
     const token = req.headers.authorization;
     if (!token) {
+      console.log('verify3');
       return res.status(401).json({
         message: 'Access denied',
       });
     }
 
     try {
+      console.log('verify4');
       // verify the token
       const verified = jwt.verify(token, process.env.JWT_SECRET);
 
@@ -123,8 +126,10 @@ const authController = {
       // Add user information to the header
       res.setHeader('X-User', JSON.stringify(userHeader));
 
+      console.log('verify5');
       return res.status(200).json(verified);
     } catch (err) {
+      console.log('verify6');
       return res.status(400).json({
         message: 'Invalid token',
       });
