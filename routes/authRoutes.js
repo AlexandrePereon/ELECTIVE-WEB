@@ -119,4 +119,58 @@ authRouter.post('/register', authController.register);
  */
 authRouter.post('/login', authController.login);
 
+/**
+ * @swagger
+ * /auth/verify:
+ *   post:
+ *     summary: Verify a user's token and return user information
+ *     description: This endpoint verifies the validity of a user's JWT token and returns the decoded token information. If the request targets a public route, no token verification is performed, and the request is allowed. For protected routes, it requires a JWT token to be provided in the Authorization header. Upon successful verification, user details are returned in the response headers.
+ *     tags: [Authentication]
+ *     responses:
+ *       200:
+ *         description: Request allowed. For protected routes, the token is successfully verified and user information is included in the response headers `X-User`.
+ *         headers:
+ *           X-User:
+ *             description: JSON string containing user details (id, firstName, lastName, email, role, partnerCode). Only included for successful token verification on protected routes.
+ *             schema:
+ *               type: string
+ *               example: '{"id":"123","firstName":"John","lastName":"Doe","email":"john.doe@example.com","role":"user","partnerCode":"ABC123"}'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 iat:
+ *                   type: integer
+ *                   description: Issued at timestamp
+ *                 exp:
+ *                   type: integer
+ *                   description: Expiration time timestamp
+ *       401:
+ *         description: Unauthorized - No token provided or request to a protected route without a valid token.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message indicating access denied due to missing or invalid token.
+ *                   example: 'Access denied'
+ *       400:
+ *         description: Bad Request - Token verification failed.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message indicating the token is invalid.
+ *                   example: 'Invalid token'
+ *     security:
+ *       - BearerAuth: []
+ */
+authRouter.post('/verify', authController.verify);
+
 export default authRouter;

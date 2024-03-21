@@ -83,8 +83,51 @@ const authController = {
     await user.save();
 
     // create and assign a token with a timeout of 1 hour
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_TIMEOUT });
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_TIMEOUT });
     return res.header('auth-token', token).json({ token });
+  },
+  verify: async (req, res) => {
+    // check if the route is public
+    const url = req.originalUrl;
+    const publicRoutes = ['/auth/register', '/auth/login'];
+    if (publicRoutes.includes(url)) {
+      return res.status(200).send();
+    }
+
+    // check if token is provided
+    const token = req.headers.authorization;
+    if (!token) {
+      return res.status(401).json({
+        message: 'Access denied',
+      });
+    }
+
+    try {
+      // verify the token
+      const verified = jwt.verify(token, process.env.JWT_SECRET);
+
+      // get the user
+      const user = await User.findByPk(verified.id);
+
+      // Set the useful information in the header
+      const userHeader = {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        partnerCode: user.partnerCode,
+      };
+
+      // Add user information to the header
+      res.setHeader('X-User', JSON.stringify(userHeader));
+
+      return res.status(200).json(verified);
+    } catch (err) {
+      return res.status(400).json({
+        message: 'Invalid token',
+      });
+    }
   },
 };
 
