@@ -123,9 +123,43 @@ authRouter.post('/login', authController.login);
  * @swagger
  * /auth/verify:
  *   post:
- *     summary: Verify a user token
- *     description: This endpoint verifies a user token by checking if it is valid and not expired. It returns the decoded token if it is valid.
+ *     summary: Verify a user's token
+ *     description: This endpoint verifies the validity of a user's JWT token. It expects the token to be provided in the Authorization header without a 'Bearer' prefix. Upon successful verification, it returns the decoded token information.
+ *     tags: [Authentication]
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully verified the token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               description: Decoded token information. The actual schema depends on the token's payload.
+ *       401:
+ *         description: Unauthorized - No token provided
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message indicating no token was provided.
+ *                   example: 'Access denied'
+ *       400:
+ *         description: Bad Request - Invalid token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message indicating the token is invalid.
+ *                   example: 'Invalid token'
  */
+
 authRouter.post('/verify', authController.verify);
 
 export default authRouter;

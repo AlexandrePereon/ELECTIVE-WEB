@@ -87,7 +87,10 @@ const authController = {
     return res.header('auth-token', token).json({ token });
   },
   verify: async (req, res) => {
-    const token = req.header('auth-token');
+    // check if token is provided
+    const token = req.headers.authorization;
+
+    // if no token is provided, return an error
     if (!token) {
       return res.status(401).json({
         message: 'Access denied',
@@ -95,6 +98,7 @@ const authController = {
     }
 
     try {
+      // verify the token
       const verified = jwt.verify(token, process.env.JWT_SECRET);
       return res.status(200).json(verified);
     } catch (err) {
