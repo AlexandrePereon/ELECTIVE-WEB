@@ -88,8 +88,10 @@ const authController = {
   },
   verify: async (req, res) => {
     console.log('verify1');
+    console.log('req: ', req);
     // check if the route is public
     const url = req.originalUrl;
+    console.log('url: ', url);
     const publicRoutes = ['/auth/register', '/auth/login', '/restaurant/api-docs'];
     if (publicRoutes.includes(url)) {
       console.log('verify2');
@@ -98,6 +100,7 @@ const authController = {
 
     // check if token is provided
     const token = req.headers.authorization;
+    console.log('token: ', token);
     if (!token) {
       console.log('verify3');
       return res.status(401).json({
