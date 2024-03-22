@@ -35,7 +35,7 @@ describe('POST /auth/register', () => {
     const response = await request(app).post('/auth/register').send(userData);
 
     expect(response.status).to.equal(200);
-    console.log(response.body);
+    expect(response.body).to.have.property('id');
   });
 
   it('should return an error if the user already exists', async () => {
