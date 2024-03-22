@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import '../config/config.js';
 import crypto from 'crypto';
 import User from '../models/userModel.js';
+import openRoutes from '../config/openRoutes.js';
 
 const authController = {
   // POST /auth/register
@@ -53,7 +54,6 @@ const authController = {
 
     try {
       await user.save();
-      console.log('utilisateur créée : ', user.email);
       return res.status(200).json({ id: user.id });
     } catch (err) {
       return res.status(400).json({ message: err });
@@ -63,11 +63,10 @@ const authController = {
   login: async (req, res) => {
     // check if username exists
     const user = await User.findOne({ where: { email: req.body.email } });
-    console.log('user: ', user);
 
     if (!user) {
       return res.status(400).json({
-        message: 'Username or password is incorrect, pas de user avec cette email',
+        message: 'Username or password is incorrect',
       });
     }
 
@@ -76,7 +75,7 @@ const authController = {
 
     if (!validPassword) {
       return res.status(400).json({
-        message: 'Username or password is incorrect, pas de password',
+        message: 'Username or password is incorrect',
       });
     }
 
@@ -89,14 +88,16 @@ const authController = {
     return res.header('auth-token', token).json({ token });
   },
   verify: async (req, res) => {
-    // console.log('req', req);
-    // get X-Forwarded-Uri
-    const uri = req.headers['x-forwarded-uri'];
-    console.log('uri: ', uri);
+    // get X-Forwarded-Uri and compare it with openRoutes
+    const forwardedUri = req.headers['x-forwarded-uri'];
+    if (openRoutes.includes(forwardedUri)) {
+      return res.status(200).json({
+        message: 'Request allowed',
+      });
+    }
 
     // check if token is provided
     const token = req.headers.authorization;
-    console.log('token: ', token);
     if (!token) {
       return res.status(401).json({
         message: 'Access denied',
@@ -122,10 +123,8 @@ const authController = {
 
       // Add user information to the header
       res.setHeader('X-User', JSON.stringify(userHeader));
-      console.log('Utilisateur authentifié : ', user.email);
       return res.status(200).json(verified);
     } catch (err) {
-      console.log('verify5');
       return res.status(400).json({
         message: 'Invalid token',
       });
