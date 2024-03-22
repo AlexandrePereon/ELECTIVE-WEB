@@ -53,6 +53,7 @@ const authController = {
 
     try {
       await user.save();
+      console.log('utilisateur créée : ', user.email);
       return res.status(200).json({ id: user.id });
     } catch (err) {
       return res.status(400).json({ message: err });
@@ -61,12 +62,12 @@ const authController = {
   // POST /auth/login
   login: async (req, res) => {
     // check if username exists
-    const user = await User.findOne({ mail: req.body.mail });
+    const user = await User.findOne({ where: { email: req.body.email } });
+    console.log('user: ', user);
 
     if (!user) {
       return res.status(400).json({
         message: 'Username or password is incorrect, pas de user avec cette email',
-        reqSent: req.body,
       });
     }
 
@@ -76,8 +77,6 @@ const authController = {
     if (!validPassword) {
       return res.status(400).json({
         message: 'Username or password is incorrect, pas de password',
-        validPassword,
-        reqSent: req.body,
       });
     }
 
@@ -90,21 +89,16 @@ const authController = {
     return res.header('auth-token', token).json({ token });
   },
   verify: async (req, res) => {
-    console.log('verify1');
-    console.log('req: ', req);
-
     // check if token is provided
     const token = req.headers.authorization;
     console.log('token: ', token);
     if (!token) {
-      console.log('verify2');
       return res.status(401).json({
         message: 'Access denied',
       });
     }
 
     try {
-      console.log('verify3');
       // verify the token
       const verified = jwt.verify(token, process.env.JWT_SECRET);
 
@@ -123,8 +117,7 @@ const authController = {
 
       // Add user information to the header
       res.setHeader('X-User', JSON.stringify(userHeader));
-
-      console.log('verify4');
+      console.log('Utilisateur authentifié : ', user.email);
       return res.status(200).json(verified);
     } catch (err) {
       console.log('verify5');
