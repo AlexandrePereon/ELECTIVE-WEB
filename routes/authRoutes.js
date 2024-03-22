@@ -122,7 +122,7 @@ authRouter.post('/login', authController.login);
 /**
  * @swagger
  * /auth/verify:
- *   post:
+ *   get:
  *     summary: Verify a user's token and return user information
  *     description: This endpoint verifies the validity of a user's JWT token and returns the decoded token information. If the request targets a public route, no token verification is performed, and the request is allowed. For protected routes, it requires a JWT token to be provided in the Authorization header. Upon successful verification, user details are returned in the response headers.
  *     tags: [Authentication]
@@ -171,6 +171,6 @@ authRouter.post('/login', authController.login);
  *     security:
  *       - BearerAuth: []
  */
-authRouter.post('/verify', authController.verify);
+authRouter.get('/verify', authController.verify);
 
 export default authRouter;
