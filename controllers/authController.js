@@ -65,7 +65,8 @@ const authController = {
 
     if (!user) {
       return res.status(400).json({
-        message: 'Username or password is incorrect',
+        message: 'Username or password is incorrect, pas de user avec cette email',
+        reqSent: req.body,
       });
     }
 
@@ -74,7 +75,9 @@ const authController = {
 
     if (!validPassword) {
       return res.status(400).json({
-        message: 'Username or password is incorrect',
+        message: 'Username or password is incorrect, pas de password',
+        validPassword,
+        reqSent: req.body,
       });
     }
 
