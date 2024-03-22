@@ -89,7 +89,10 @@ const authController = {
     return res.header('auth-token', token).json({ token });
   },
   verify: async (req, res) => {
-    console.log('req', req);
+    // console.log('req', req);
+    // get X-Forwarded-Uri
+    const uri = req.headers['x-forwarded-uri'];
+    console.log('uri: ', uri);
 
     // check if token is provided
     const token = req.headers.authorization;
