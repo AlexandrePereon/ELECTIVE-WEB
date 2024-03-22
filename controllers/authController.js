@@ -89,6 +89,8 @@ const authController = {
     return res.header('auth-token', token).json({ token });
   },
   verify: async (req, res) => {
+    console.log('req', req);
+
     // check if token is provided
     const token = req.headers.authorization;
     console.log('token: ', token);
