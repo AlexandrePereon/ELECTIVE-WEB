@@ -15,7 +15,7 @@ const authController = {
 
     if (userExists) {
       return res.status(400).json({
-        message: 'Username or email already exists',
+        message: 'Email déjà utilisé',
       });
     }
 
@@ -27,7 +27,7 @@ const authController = {
     // If a partner code is provided but no partner is found or the partner have another role, return an error
     if ((req.body.partnerCode && !partner) || (partner && partner.role !== req.body.role)) {
       return res.status(400).json({
-        message: 'Invalid partner code',
+        message: 'Code de parainnage invalide',
       });
     }
 
@@ -54,7 +54,7 @@ const authController = {
 
     try {
       await user.save();
-      return res.status(200).json({ id: user.id });
+      return res.status(200).json({ id: user.id, message: 'Votre compte a été créé' });
     } catch (err) {
       return res.status(400).json({ message: err });
     }
@@ -66,7 +66,7 @@ const authController = {
 
     if (!user) {
       return res.status(400).json({
-        message: 'Username or password is incorrect',
+        message: 'Email ou mot de passe incorrect',
       });
     }
 
@@ -75,7 +75,7 @@ const authController = {
 
     if (!validPassword) {
       return res.status(400).json({
-        message: 'Username or password is incorrect',
+        message: 'Email ou mot de passe incorrect',
       });
     }
 
@@ -85,22 +85,24 @@ const authController = {
 
     // create and assign a token with a timeout of 1 hour
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_TIMEOUT });
-    return res.header('auth-token', token).json({ token });
+    return res.header('auth-token', token).json({ token, message: 'Vous etes connecté' });
   },
   verify: async (req, res) => {
     // get X-Forwarded-Uri and compare it with openRoutes
     const forwardedUri = req.headers['x-forwarded-uri'];
-    if (openRoutes.some((route) => forwardedUri.startsWith(route))) {
-      return res.status(200).json({
-        message: 'Request allowed',
-      });
+    if (forwardedUri) {
+      if (openRoutes.some((route) => forwardedUri.startsWith(route))) {
+        return res.status(200).json({
+          message: 'Accès autorisé',
+        });
+      }
     }
 
     // check if token is provided
     const token = req.headers.authorization;
     if (!token) {
       return res.status(401).json({
-        message: 'Access denied',
+        message: 'Accès refusé',
       });
     }
 
@@ -119,6 +121,7 @@ const authController = {
         email: user.email,
         role: user.role,
         partnerCode: user.partnerCode,
+        ...verified,
       };
 
       // Add user information to the header
@@ -126,7 +129,31 @@ const authController = {
       return res.status(200).json(verified);
     } catch (err) {
       return res.status(400).json({
-        message: 'Invalid token',
+        message: 'Token invalide',
+      });
+    }
+  },
+  refreshToken: async (req, res) => {
+    const token = req.headers.authorization;
+    if (!token) {
+      return res.status(401).json({
+        message: 'Accès refusé',
+      });
+    }
+
+    try {
+      // verify the token
+      const verified = jwt.verify(token, process.env.JWT_SECRET);
+
+      // get the user
+      const user = await User.findByPk(verified.id);
+
+      // create and assign a token with a timeout of 1 hour
+      const newToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_TIMEOUT });
+      return res.header('auth-token', newToken).json({ token: newToken, message: 'Token rafraichi' });
+    } catch (err) {
+      return res.status(400).json({
+        message: 'Token invalide',
       });
     }
   },
