@@ -90,7 +90,7 @@ const authController = {
   verify: async (req, res) => {
     // get X-Forwarded-Uri and compare it with openRoutes
     const forwardedUri = req.headers['x-forwarded-uri'];
-    if (openRoutes.some((route) => route.includes(forwardedUri))) {
+    if (openRoutes.some((route) => forwardedUri.startsWith(route))) {
       return res.status(200).json({
         message: 'Request allowed',
       });
