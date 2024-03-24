@@ -177,4 +177,60 @@ authRouter.post('/login', authController.login);
  */
 authRouter.get('/verify', authController.verify);
 
+/**
+ * @swagger
+ * /auth/refresh:
+ *   get:
+ *     summary: Refresh a user's JWT token
+ *     description: This endpoint refreshes a user's JWT token by verifying the current token provided in the 'Authorization' header. If the token is valid, it generates a new JWT token with a 1-hour expiry and returns it in both the response body and the 'auth-token' header. If the token is missing or invalid, it denies access with appropriate status codes and messages.
+ *     tags: [Authentication]
+ *     responses:
+ *       200:
+ *         description: A new JWT token is successfully created and returned.
+ *         headers:
+ *           auth-token:
+ *             description: Newly issued JWT token for the user, valid for 1 hour.
+ *             schema:
+ *               type: string
+ *               example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEyMyIsImlhdCI6MTUxNjIzOTAyMiwiZXhwIjoxNTE2MjQyNjIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   description: Newly issued JWT token for the user.
+ *                   example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEyMyIsImlhdCI6MTUxNjIzOTAyMiwiZXhwIjoxNTE2MjQyNjIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+ *                 message:
+ *                   type: string
+ *                   description: Confirmation message indicating the token has been refreshed.
+ *                   example: 'Token rafraichi'
+ *       401:
+ *         description: Unauthorized - Access denied due to missing or no authorization token.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message indicating access is denied due to missing or no authorization token.
+ *                   example: 'Accès refusé'
+ *       400:
+ *         description: Bad Request - Provided token is invalid.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message indicating the token is invalid.
+ *                   example: 'Token invalide'
+ *     security:
+ *       - BearerAuth: []
+ */
+authRouter.get('/refresh', authController.refreshToken);
+
 export default authRouter;
