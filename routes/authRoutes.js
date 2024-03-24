@@ -54,6 +54,10 @@ const authRouter = express.Router();
  *                   type: string
  *                   description: The unique identifier of the newly registered user.
  *                   example: '1'
+ *                 message:
+ *                   type: string
+ *                   description: Confirmation message indicating the user has been successfully registered.
+ *                   example: 'Votre compte a été créé'
  *       400:
  *         description: Bad Request - Username or email already exists, or other validation errors
  *         content:
