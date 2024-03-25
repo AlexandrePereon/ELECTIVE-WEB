@@ -24,7 +24,7 @@ const User = database.define('user', {
     allowNull: false,
     defaultValue: 'user',
     validate: {
-      isIn: [['user', 'admin', 'superadmin']],
+      isIn: [['user', 'restaurant', 'deliveryman', 'developer', 'marketing', 'technical']],
     },
   },
   partnerCode: {
