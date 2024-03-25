@@ -85,7 +85,13 @@ const authController = {
 
     // create and assign a token with a timeout of 1 hour
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_TIMEOUT });
-    return res.header('auth-token', token).json({ token, message: 'Vous etes connecté' });
+    return res.header('auth-token', token).json({
+      token,
+      message: 'Authentification réussie',
+      user: {
+        id: user.id, firstName: user.firstName, lastName: user.lastName, email: user.email, role: user.role, partnerCode: user.partnerCode,
+      },
+    });
   },
   verify: async (req, res) => {
     // get X-Forwarded-Uri and compare it with openRoutes

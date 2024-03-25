@@ -109,6 +109,32 @@ authRouter.post('/register', authController.register);
  *                   type: string
  *                   description: JWT token for the authenticated session.
  *                   example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiLCJpYXQiOjE1MTYyMzkwMjJ9.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+ *                 message:
+ *                   type: string
+ *                   description: Confirmation message indicating the user has been successfully authenticated.
+ *                   example: 'Authentification réussie'
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       description: The unique identifier of the authenticated user.
+ *                       example: '1'
+ *                     firstName:
+ *                       type: string
+ *                       example: 'john'
+ *                     lastName:
+ *                       type: string
+ *                       example: 'Doe'
+ *                     email:
+ *                       type: string
+ *                       example: 'john.doe@example.com'
+ *                     role:
+ *                       type: string
+ *                       example: 'user'
+ *                     partnerCode:
+ *                       type: string
+ *                       example: 'b51726297b'
  *       400:
  *         description: Bad Request - Username or password is incorrect
  *         content:
