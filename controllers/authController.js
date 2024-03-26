@@ -96,12 +96,15 @@ const authController = {
   verify: async (req, res) => {
     // get X-Forwarded-Uri and compare it with openRoutes
     const forwardedUri = req.headers['x-forwarded-uri'];
-    if (forwardedUri) {
-      if (openRoutes.some((route) => forwardedUri.startsWith(route))) {
-        return res.status(200).json({
-          message: 'Accès autorisé',
-        });
-      }
+    const method = req.headers['x-forwarded-method'];
+
+    console.log('url requetée : ', forwardedUri);
+    console.log('verbe http : ', method);
+    if (forwardedUri && openRoutes.some((route) => forwardedUri.startsWith(route.path) && method === route.method)) {
+      console.log('route autorisée : ', openRoutes);
+      return res.status(200).json({
+        message: 'Accès autorisé',
+      });
     }
 
     // check if token is provided
