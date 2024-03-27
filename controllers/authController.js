@@ -110,6 +110,7 @@ const authController = {
 
     console.log('url requetée : ', forwardedUri);
     console.log('verbe http : ', method);
+    console.log('Header : ', req.headers);
     if (forwardedUri && openRoutes.some((route) => forwardedUri.startsWith(route.path) && method === route.method)) {
       console.log('route autorisée : ', openRoutes);
       return res.status(200).json({
@@ -118,7 +119,7 @@ const authController = {
     }
 
     // check if token is provided
-    const token = req.headers.authorization;
+    const token = req.headers.authorization || req.headers['sec-websocket-protocol'];
     if (!token) {
       return res.status(401).json({
         message: 'Accès refusé',
