@@ -7,6 +7,7 @@ import cors from 'cors';
 import { fileURLToPath } from 'url';
 import database from './db/index.js';
 import routes from './routes/index.js';
+import prometheusRouter from './routes/prometheusRoutes.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -19,6 +20,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //  adding routes
 app.use(process.env.BASE_ENDPOINT, routes);
+app.use(prometheusRouter);
 
 const connectWithRetry = async () => {
   try {

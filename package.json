@@ -27,6 +27,7 @@
     "lodash": "^4.17.13",
     "mocha": "^10.3.0",
     "mysql2": "^3.9.2",
+    "prom-client": "^15.1.1",
     "sequelize": "^6.37.1",
     "supertest": "^6.3.4",
     "swagger-jsdoc": "^6.2.8",
