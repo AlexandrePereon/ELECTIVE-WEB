@@ -4,6 +4,7 @@ import '../config/config.js';
 import crypto from 'crypto';
 import User from '../models/userModel.js';
 import openRoutes from '../config/openRoutes.js';
+import restaurantClient from '../client/restaurantClient.js';
 
 const authController = {
   // POST /auth/register
@@ -79,17 +80,24 @@ const authController = {
       });
     }
 
-    // update last login
+    let restaurantId = null;
+
+    if (user.role === 'restaurant') {
+      const restaurant = await restaurantClient.getRestaurantByCreatorId(user.id);
+      restaurantId = restaurant ? restaurant._id : null;
+    }
+
     user.lastLogin = new Date();
     await user.save();
 
     // create and assign a token with a timeout of 1 hour
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_TIMEOUT });
+
     return res.header('auth-token', token).json({
       token,
       message: 'Authentification réussie',
       user: {
-        id: user.id, firstName: user.firstName, lastName: user.lastName, email: user.email, role: user.role, partnerCode: user.partnerCode,
+        id: user.id, firstName: user.firstName, lastName: user.lastName, email: user.email, role: user.role, partnerCode: user.partnerCode, restaurantId,
       },
     });
   },

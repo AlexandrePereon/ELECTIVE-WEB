@@ -1,8 +1,4 @@
 {
-  "test": {
-    "PORT": 3000,
-    "MONGODB_URI": "mongodb://mongo:27017/TodoAppTest"
-  },
   "local": {
     "PORT": 3000,
     "MYSQL_HOST": "localhost",
