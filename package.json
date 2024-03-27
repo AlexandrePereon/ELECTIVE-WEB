@@ -30,7 +30,8 @@
     "sequelize": "^6.37.1",
     "supertest": "^6.3.4",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.0"
+    "swagger-ui-express": "^5.0.0",
+    "winston": "^3.13.0"
   },
   "devDependencies": {
     "eslint": "^8.57.0",

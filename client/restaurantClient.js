@@ -1,5 +1,7 @@
 import axios from 'axios';
 import clientConfig from './clientConfig.json' assert { type: 'json' };
+import logger from '../utils/logger/logger.js';
+
 
 
 const restaurantClient = {
@@ -12,6 +14,7 @@ const restaurantClient = {
             const response = await axiosReq.get(`${clientConfig.restaurantPREFIX}${clientConfig.restaurantGetByCreatorId}/${creatorId}`);
             return response.data; 
          } catch (error) {
+            logger.log('error', 'Error lors de la récupération du restaurant pour l\'utilisateur: ', {creatorId: creatorId, erreur: error.message});
             return null;
         }
     },

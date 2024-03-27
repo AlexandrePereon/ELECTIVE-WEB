@@ -5,6 +5,7 @@ import crypto from 'crypto';
 import User from '../models/userModel.js';
 import openRoutes from '../config/openRoutes.js';
 import restaurantClient from '../client/restaurantClient.js';
+import logger from '../utils/logger/logger.js';
 
 const authController = {
   // POST /auth/register
@@ -55,6 +56,7 @@ const authController = {
 
     try {
       await user.save();
+      logger.log('info', 'Utilisateur enregistré', { userID: user.id });
       return res.status(200).json({ id: user.id, message: 'Votre compte a été créé' });
     } catch (err) {
       return res.status(400).json({ message: err });
@@ -62,6 +64,7 @@ const authController = {
   },
   // POST /auth/login
   login: async (req, res) => {
+    logger.log('info', 'Demande de connexion', { userEmail: req.body.email });
     // check if username exists
     const user = await User.findOne({ where: { email: req.body.email } });
 
@@ -92,7 +95,6 @@ const authController = {
 
     // create and assign a token with a timeout of 1 hour
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_TIMEOUT });
-
     return res.header('auth-token', token).json({
       token,
       message: 'Authentification réussie',
@@ -143,6 +145,8 @@ const authController = {
 
       // Add user information to the header
       res.setHeader('X-User', JSON.stringify(userHeader));
+      logger.log('info', 'Utilisateur vérifié', { userID: user.id });
+
       return res.status(200).json(verified);
     } catch (err) {
       return res.status(400).json({
