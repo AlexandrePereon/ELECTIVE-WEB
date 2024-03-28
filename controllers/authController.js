@@ -4,6 +4,7 @@ import '../config/config.js';
 import crypto from 'crypto';
 import User from '../models/userModel.js';
 import openRoutes from '../config/openRoutes.js';
+// eslint-disable-next-line import/no-named-as-default, import/no-named-as-default-member
 import restaurantClient from '../client/restaurantClient.js';
 import logger from '../utils/logger/logger.js';
 
