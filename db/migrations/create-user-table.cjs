@@ -26,6 +26,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DataTypes.STRING,
       },
+      restaurant: {
+        allowNull: true,
+        type: Sequelize.DataTypes.STRING,
+      },
       role: {
         allowNull: false,
         defaultValue: 'user',

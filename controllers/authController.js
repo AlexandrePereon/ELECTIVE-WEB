@@ -4,6 +4,7 @@ import '../config/config.js';
 import crypto from 'crypto';
 import User from '../models/userModel.js';
 import openRoutes from '../config/openRoutes.js';
+// eslint-disable-next-line import/no-named-as-default, import/no-named-as-default-member
 import restaurantClient from '../client/restaurantClient.js';
 import logger from '../utils/logger/logger.js';
 
@@ -52,6 +53,7 @@ const authController = {
       password: hashedPassword,
       partnerCode,
       partnerId: partner?.id,
+      restaurantId: null,
     });
 
     try {
@@ -83,11 +85,10 @@ const authController = {
       });
     }
 
-    let restaurantId = null;
-
-    if (user.role === 'restaurant') {
+    if (user.role === 'restaurant' && user.restaurant === null) {
+      logger.log('info', 'Récupération restaurant', { userID: user.id });
       const restaurant = await restaurantClient.getRestaurantByCreatorId(user.id);
-      restaurantId = restaurant ? restaurant._id : null;
+      user.restaurant = restaurant ? restaurant._id : null;
     }
 
     user.lastLogin = new Date();
@@ -99,7 +100,7 @@ const authController = {
       token,
       message: 'Authentification réussie',
       user: {
-        id: user.id, firstName: user.firstName, lastName: user.lastName, email: user.email, role: user.role, partnerCode: user.partnerCode, restaurantId,
+        id: user.id, firstName: user.firstName, lastName: user.lastName, email: user.email, role: user.role, partnerCode: user.partnerCode, restaurantId: user.restaurant,
       },
     });
   },
@@ -108,11 +109,12 @@ const authController = {
     const forwardedUri = req.headers['x-forwarded-uri'];
     const method = req.headers['x-forwarded-method'];
 
-    console.log('url requetée : ', forwardedUri);
-    console.log('verbe http : ', method);
-    console.log('Header : ', req.headers);
+    logger.log('info', `URL demandée : ${forwardedUri}`);
+    logger.log('info', `Verbe HTTP : ${method}`);
+    logger.log('info', { header: req.headers });
+
     if (forwardedUri && openRoutes.some((route) => forwardedUri.startsWith(route.path) && method === route.method)) {
-      console.log('route autorisée : ', openRoutes);
+      logger.log('info', { openRoutes });
       return res.status(200).json({
         message: 'Accès autorisé',
       });
