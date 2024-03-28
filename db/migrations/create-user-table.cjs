@@ -67,6 +67,15 @@ module.exports = {
         allowNull: true,
         type: Sequelize.DATE,
       },
+      refreshToken: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      isBlocked: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
     });
   },
 

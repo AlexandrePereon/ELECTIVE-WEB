@@ -206,57 +206,58 @@ authRouter.get('/verify', authController.verify);
 /**
  * @swagger
  * /auth/refresh:
- *   get:
- *     summary: Refresh a user's JWT token
- *     description: This endpoint refreshes a user's JWT token by verifying the current token provided in the 'Authorization' header. If the token is valid, it generates a new JWT token with a 1-hour expiry and returns it in both the response body and the 'auth-token' header. If the token is missing or invalid, it denies access with appropriate status codes and messages.
+ *   post:
+ *     summary: Refresh a user's JWT token using a refresh token
+ *     description: This endpoint refreshes a user's JWT token. It requires a refresh token to be provided in the request body. If the refresh token is valid and the user is not blocked, it generates a new JWT token with a specified expiry and returns it in the response body. If the refresh token is missing, invalid, or the user is blocked, it denies access with appropriate status codes and messages.
  *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - refreshToken
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *                 description: The refresh token that needs to be validated to issue a new JWT token.
  *     responses:
  *       200:
  *         description: A new JWT token is successfully created and returned.
- *         headers:
- *           auth-token:
- *             description: Newly issued JWT token for the user, valid for 1 hour.
- *             schema:
- *               type: string
- *               example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEyMyIsImlhdCI6MTUxNjIzOTAyMiwiZXhwIjoxNTE2MjQyNjIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 token:
- *                   type: string
- *                   description: Newly issued JWT token for the user.
- *                   example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEyMyIsImlhdCI6MTUxNjIzOTAyMiwiZXhwIjoxNTE2MjQyNjIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
- *                 message:
- *                   type: string
- *                   description: Confirmation message indicating the token has been refreshed.
- *                   example: 'Token rafraichi'
+ *             examples:
+ *               success:
+ *                 summary: Successful response example
+ *                 value:
+ *                   token: 'NewlyIssuedJwtTokenHere'
+ *                   message: 'Token rafraichi'
  *       401:
- *         description: Unauthorized - Access denied due to missing or no authorization token.
+ *         description: Unauthorized - Access denied due to missing or invalid refresh token.
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   description: Error message indicating access is denied due to missing or no authorization token.
- *                   example: 'Accès refusé'
- *       400:
- *         description: Bad Request - Provided token is invalid.
+ *             examples:
+ *               missingToken:
+ *                 summary: Missing refresh token
+ *                 value:
+ *                   error: 'Un refresh token est requis.'
+ *               invalidToken:
+ *                 summary: Invalid refresh token
+ *                 value:
+ *                   error: 'Le refresh token est invalide.'
+ *       403:
+ *         description: Forbidden - The user's account is blocked.
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   description: Error message indicating the token is invalid.
- *                   example: 'Token invalide'
+ *             examples:
+ *               blockedAccount:
+ *                 summary: User account is blocked
+ *                 value:
+ *                   error: 'Votre compte a été bloqué.'
  *     security:
- *       - BearerAuth: []
+ *       []
  */
-authRouter.get('/refresh', authController.refreshToken);
+authRouter.post('/refresh', authController.refreshToken);
 
 export default authRouter;
