@@ -28,7 +28,7 @@ const connectWithRetry = async () => {
     console.log('Database connected');
 
     // Migrate if there are any pending migrations
-    database.sync()
+    database.sync({ alter: true })
       .then(() => {
         console.log('Database migrated');
         app.emit('dbReady');

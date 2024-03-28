@@ -19,6 +19,10 @@ const User = database.define('user', {
     type: sequelize.STRING,
     allowNull: false,
   },
+  restaurant: {
+    type: sequelize.STRING,
+    allowNull: true,
+  },
   role: {
     type: sequelize.STRING,
     allowNull: false,
