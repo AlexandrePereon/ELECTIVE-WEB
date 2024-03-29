@@ -14,7 +14,7 @@ const restaurantClient = {
             const response = await axiosReq.get(`${clientConfig.restaurantPREFIX}${clientConfig.restaurantGetByCreatorId}/${creatorId}`);
             return response.data; 
          } catch (error) {
-            logger.log('error', 'Error lors de la récupération du restaurant pour l\'utilisateur: ', {creatorId: creatorId});
+            logger.log('error', `Error lors de la récupération du restaurant pour l'utilisateur : ${creatorId}`, { error: error.message });
             return null;
         }
     },
