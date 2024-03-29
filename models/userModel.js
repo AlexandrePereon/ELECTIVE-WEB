@@ -49,6 +49,15 @@ const User = database.define('user', {
     type: sequelize.DATE,
     allowNull: true,
   },
+  refreshToken: {
+    type: sequelize.STRING,
+    allowNull: true,
+  },
+  isBlocked: {
+    type: sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
 });
 
 // Constraints

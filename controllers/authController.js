@@ -76,6 +76,13 @@ const authController = {
       });
     }
 
+    // check if user is blocked
+    if (user.isBlocked) {
+      return res.status(400).json({
+        message: 'Votre compte a été bloqué',
+      });
+    }
+
     // check if password is correct
     const validPassword = await bcrypt.compare(req.body.password, user.password);
 
@@ -91,13 +98,17 @@ const authController = {
       user.restaurant = restaurant ? restaurant._id : null;
     }
 
+    // create and assign a token with a timeout of 15 minutes
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_TIMEOUT });
+    const refreshToken = jwt.sign({ id: user.id }, process.env.JWT_REFRESH_SECRET, { expiresIn: process.env.JWT_REFRESH_TIMEOUT });
+
+    user.refreshToken = refreshToken;
     user.lastLogin = new Date();
     await user.save();
 
-    // create and assign a token with a timeout of 1 hour
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_TIMEOUT });
     return res.header('auth-token', token).json({
       token,
+      refreshToken,
       message: 'Authentification réussie',
       user: {
         id: user.id, firstName: user.firstName, lastName: user.lastName, email: user.email, role: user.role, partnerCode: user.partnerCode, restaurantId: user.restaurant,
@@ -121,7 +132,9 @@ const authController = {
     }
 
     // check if token is provided
-    const token = req.headers.authorization || req.headers['sec-websocket-protocol'];
+    const bearerToken = req.headers.authorization || req.headers['sec-websocket-protocol'];
+    const token = bearerToken ? bearerToken.replace('Bearer ', '') : null;
+
     if (!token) {
       return res.status(401).json({
         message: 'Accès refusé',
@@ -134,6 +147,13 @@ const authController = {
 
       // get the user
       const user = await User.findByPk(verified.id);
+
+      // check if user is blocked
+      if (user.isBlocked) {
+        return res.status(400).json({
+          message: 'Votre compte a été bloqué',
+        });
+      }
 
       // Set the useful information in the header
       const userHeader = {
@@ -158,27 +178,20 @@ const authController = {
     }
   },
   refreshToken: async (req, res) => {
-    const token = req.headers.authorization;
-    if (!token) {
-      return res.status(401).json({
-        message: 'Accès refusé',
-      });
-    }
+    const { refreshToken } = req.body;
+    if (!refreshToken) return res.status(401).send({ error: 'Un refresh token est requis.' });
 
     try {
-      // verify the token
-      const verified = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+      const user = await User.findOne({ where: { id: decoded.id, refreshToken } });
 
-      // get the user
-      const user = await User.findByPk(verified.id);
+      if (!user) return res.status(401).send({ error: 'Le refresh token est invalide.' });
+      if (user.isBlocked) return res.status(403).send({ error: 'Votre compte a été bloqué.' });
 
-      // create and assign a token with a timeout of 1 hour
-      const newToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_TIMEOUT });
-      return res.header('auth-token', newToken).json({ token: newToken, message: 'Token rafraichi' });
-    } catch (err) {
-      return res.status(400).json({
-        message: 'Token invalide',
-      });
+      const newToken = jwt.sign({ id: user.id.toString() }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_TIMEOUT });
+      return res.send({ token: newToken, message: 'Token rafraichi' });
+    } catch (error) {
+      return res.status(401).send({ error: 'Le refresh token est invalide.' });
     }
   },
 };
