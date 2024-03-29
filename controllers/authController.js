@@ -120,12 +120,10 @@ const authController = {
     const forwardedUri = req.headers['x-forwarded-uri'];
     const method = req.headers['x-forwarded-method'];
 
-    console.log(req);
-
     logger.log('info', `URL demandée : ${forwardedUri}`);
     logger.log('info', `Verbe HTTP : ${method}`);
     logger.log('info', { header: req.headers });
-    logger.log('info', `request : ${req}`);
+    console.log(req);
 
     if (forwardedUri && openRoutes.some((route) => forwardedUri.startsWith(route.path) && method === route.method)) {
       logger.log('info', { openRoutes });
