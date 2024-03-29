@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import '../config/config.js';
 import crypto from 'crypto';
+import url from 'url';
 import User from '../models/userModel.js';
 import openRoutes from '../config/openRoutes.js';
 // eslint-disable-next-line import/no-named-as-default, import/no-named-as-default-member
@@ -123,8 +124,6 @@ const authController = {
     logger.log('info', `URL demandée : ${forwardedUri}`);
     logger.log('info', `Verbe HTTP : ${method}`);
     logger.log('info', { header: req.headers });
-    logger.log('info', { query: req.query });
-    console.log(req);
 
     if (forwardedUri && openRoutes.some((route) => forwardedUri.startsWith(route.path) && method === route.method)) {
       logger.log('info', { openRoutes });
@@ -134,7 +133,7 @@ const authController = {
     }
 
     // check if token is provided
-    const bearerToken = req.headers.authorization || req.query.socketToken;
+    const bearerToken = req.headers.authorization || url.parse(forwardedUri, true).query;
     const token = bearerToken ? bearerToken.replace('Bearer ', '') : null;
 
     if (!token) {
