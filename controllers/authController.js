@@ -132,8 +132,11 @@ const authController = {
       });
     }
 
+    // With url get the socketToken from forwardedUri
+    const { socketToken } = url.parse(forwardedUri, true).query;
+
     // check if token is provided
-    const bearerToken = req.headers.authorization || url.parse(forwardedUri, true).query.socketToken;
+    const bearerToken = req.headers.authorization || socketToken;
     const token = bearerToken ? bearerToken.replace('Bearer ', '') : null;
 
     if (!token) {
