@@ -109,6 +109,10 @@ authRouter.post('/register', authController.register);
  *                   type: string
  *                   description: JWT token for the authenticated session.
  *                   example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiLCJpYXQiOjE1MTYyMzkwMjJ9.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+ *                 refreshToken:
+ *                   type: string
+ *                   description: JWT token for the authenticated session.
+ *                   example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiLCJpYXQiOjE1MTYyMzkwMjJ9.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
  *                 message:
  *                   type: string
  *                   description: Confirmation message indicating the user has been successfully authenticated.
