@@ -2,28 +2,51 @@ name: Build and Push Docker Image to Docker Hub
 
 on:
   push:
-    branches: [ "dev"]
+    branches: ["dev"]
 
 env:
-  # GitHub repository name
   REPO_NAME: elective-web-auth
 
 jobs:
-
   build_and_push:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: auth
+          MYSQL_USER: test
+          MYSQL_PASSWORD: test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Build the Docker image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ env.REPO_NAME }} .
-    
-    - name: Log in to Docker Hub
-      uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+      - uses: actions/checkout@v3
 
-    - name: Push Docker image
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ env.REPO_NAME }}
+      - name: Build the Docker image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ env.REPO_NAME }} .
+
+      - name: Wait for MySQL to be ready
+        run: |
+          until mysqladmin ping -h 127.0.0.1 --silent; do
+            echo 'waiting for mysql...'
+            sleep 2
+          done
+          echo 'MySQL is up and running!'
+
+      - name: Run Unit Tests
+        env:
+          NODE_ENV_PROFILE: test
+        run: |
+          docker run -e NODE_ENV=${{env.NODE_ENV_PROFILE}} ${{ secrets.DOCKER_USERNAME }}/${{ env.REPO_NAME }} npm run test
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Push Docker image
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ env.REPO_NAME }}

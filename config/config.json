@@ -1,4 +1,19 @@
 {
+  "test": {
+    "PORT": 3000,
+    "MYSQL_HOST": "localhost",
+    "BASE_URI": "http://localhost:3000",
+    "BASE_ENDPOINT": "/auth",
+    "JWT_SECRET": "jwt-key",
+    "JWT_TIMEOUT": "15m",
+    "JWT_REFRESH_SECRET": "jwt-refresh-key",
+    "JWT_REFRESH_TIMEOUT": "7d",
+    "DB_DIALECT": "mysql",
+    "DB_USER": "test",
+    "DB_PASS": "test",
+    "DB_NAME": "auth",
+    "DB_PORT": "3306"
+  },
   "local": {
     "PORT": 3000,
     "MYSQL_HOST": "localhost",
@@ -9,8 +24,8 @@
     "JWT_REFRESH_SECRET": "jwt-refresh-key",
     "JWT_REFRESH_TIMEOUT": "7d",
     "DB_DIALECT": "mysql",
-    "DB_USER": "root",
-    "DB_PASS": "root",
+    "DB_USER": "test",
+    "DB_PASS": "test",
     "DB_NAME": "auth",
     "DB_PORT": "3306"
   },
