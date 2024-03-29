@@ -123,6 +123,7 @@ const authController = {
     logger.log('info', `URL demandée : ${forwardedUri}`);
     logger.log('info', `Verbe HTTP : ${method}`);
     logger.log('info', { header: req.headers });
+    logger.log('info', { query: req.query });
     console.log(req);
 
     if (forwardedUri && openRoutes.some((route) => forwardedUri.startsWith(route.path) && method === route.method)) {
