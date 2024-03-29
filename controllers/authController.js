@@ -133,7 +133,7 @@ const authController = {
 
     // check if token is provided
     const bearerToken = req.headers.authorization || req.headers['sec-websocket-protocol'];
-    const token = bearerToken ? bearerToken.split(' ')[1] : null;
+    const token = bearerToken ? bearerToken.replace('Bearer ', '') : null;
 
     if (!token) {
       return res.status(401).json({
