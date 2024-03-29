@@ -133,7 +133,7 @@ const authController = {
     }
 
     // check if token is provided
-    const bearerToken = req.headers.authorization || url.parse(forwardedUri, true).query;
+    const bearerToken = req.headers.authorization || url.parse(forwardedUri, true).query.socketToken;
     const token = bearerToken ? bearerToken.replace('Bearer ', '') : null;
 
     if (!token) {
