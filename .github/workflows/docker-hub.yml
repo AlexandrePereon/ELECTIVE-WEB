@@ -7,8 +7,8 @@ env:
   REPO_NAME: elective-web-auth
   # Database configuration
   DB_NAME: testdb
-  DB_USER: user
-  DB_PASS: pass
+  DB_USER: root
+  DB_PASS: root
   DB_PORT: 3306
 
 jobs:
@@ -21,8 +21,8 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: ${{ env.DB_NAME }}
-          MYSQL_USER: ${{ env.DB_USER }}
-          MYSQL_PASSWORD: ${{ env.DB_PASS }}
+          # MYSQL_USER: ${{ env.DB_USER }}
+          # MYSQL_PASSWORD: ${{ env.DB_PASS }}
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
