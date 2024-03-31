@@ -8,11 +8,7 @@
     "JWT_TIMEOUT": "15m",
     "JWT_REFRESH_SECRET": "jwt-refresh-key",
     "JWT_REFRESH_TIMEOUT": "7d",
-    "DB_DIALECT": "mysql",
-    "DB_USER": "user",
-    "DB_PASS": "pass",
-    "DB_NAME": "testdb",
-    "DB_PORT": "3306"
+    "DB_DIALECT": "mysql"
   },
   "local": {
     "PORT": 3000,
