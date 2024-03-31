@@ -9,22 +9,22 @@ env:
   DB_NAME: testdb
   DB_USER: root
   DB_PASS: root
+  DB_PORT: 5432
 
 jobs:
   build_and_push:
     runs-on: ubuntu-latest
 
     services:
-      mysql:
-        image: mysql:5.7
+      postgres:
+        image: postgres:latest
         env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: ${{ env.DB_NAME }}
-          # MYSQL_USER: ${{ env.DB_USER }}
-          # MYSQL_PASSWORD: ${{ env.DB_PASS }}
+          POSTGRES_PASSWORD: ${{ env.DB_PASS }}
+          POSTGRES_DB: ${{ env.DB_NAME }}
+          POSTGRES_USER: ${{ env.DB_USER }}
         ports:
-          - 3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+          - 5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
       - uses: actions/checkout@v3
@@ -39,7 +39,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Run unit tests
-        run: docker run -e NODE_ENV_PROFILE=test -e DB_NAME=${{ env.DB_NAME }} -e DB_PORT=${{job.services.mysql.ports[3306]}} -e DB_USER=${{ env.DB_USER }} -e DB_PASS=${{ env.DB_PASS }} ${{ secrets.DOCKER_USERNAME }}/${{ env.REPO_NAME }} npm run test
+        run: docker run -e NODE_ENV_PROFILE=test -e DB_NAME=${{ env.DB_NAME }} -e DB_USER=${{ env.DB_USER }} -e DB_PASS=${{ env.DB_PASS }} -e DB_PORT=${{ env.DB_PORT }} ${{ secrets.DOCKER_USERNAME }}/${{ env.REPO_NAME }} npm run test
 
       # - name: Push Docker image
       # run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ env.REPO_NAME }}
