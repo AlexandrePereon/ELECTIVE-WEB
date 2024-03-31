@@ -1,7 +1,6 @@
 {
   "test": {
     "PORT": 3000,
-    "MYSQL_HOST": "mysql",
     "BASE_URI": "http://localhost:3000",
     "BASE_ENDPOINT": "/auth",
     "JWT_SECRET": "jwt-key",
