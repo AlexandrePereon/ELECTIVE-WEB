@@ -1,6 +1,6 @@
 on:
   push:
-    branches: ["dev"]
+    branches: ["dev", "feature/github-actions-test"]
 
 env:
   # GitHub repository name
