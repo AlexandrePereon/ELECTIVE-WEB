@@ -9,7 +9,6 @@ env:
   DB_NAME: testdb
   DB_USER: root
   DB_PASS: root
-  DB_PORT: 3306
 
 jobs:
   build_and_push:
@@ -24,7 +23,7 @@ jobs:
           # MYSQL_USER: ${{ env.DB_USER }}
           # MYSQL_PASSWORD: ${{ env.DB_PASS }}
         ports:
-          - 3306:3306
+          - 3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
@@ -40,7 +39,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Run unit tests
-        run: docker run -e NODE_ENV_PROFILE=test -e DB_NAME=${{ env.DB_NAME }} -e DB_USER=${{ env.DB_USER }} -e DB_PASS=${{ env.DB_PASS }} ${{ secrets.DOCKER_USERNAME }}/${{ env.REPO_NAME }} npm run test
+        run: docker run -e NODE_ENV_PROFILE=test -e DB_NAME=${{ env.DB_NAME }} -e DB_PORT=${{job.services.mysql.ports[3306]}} -e DB_USER=${{ env.DB_USER }} -e DB_PASS=${{ env.DB_PASS }} ${{ secrets.DOCKER_USERNAME }}/${{ env.REPO_NAME }} npm run test
 
       # - name: Push Docker image
       # run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ env.REPO_NAME }}
