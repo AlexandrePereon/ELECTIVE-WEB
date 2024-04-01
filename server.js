@@ -37,7 +37,6 @@ const connectWithRetry = async () => {
         console.error('Unable to migrate:', err);
       });
   } catch (error) {
-    console.error(error);
     console.log('Unable to connect to the database');
     console.log('Retrying in 5 seconds...');
     setTimeout(connectWithRetry, 5000);

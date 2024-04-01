@@ -11,9 +11,6 @@ if (env === "production" || env === "test"|| env === "local") {
   console.log("BaseURL : " + envConfig.BASE_URI);
   console.log("BaseENDPOINT : " + envConfig.BASE_ENDPOINT);
   console.log("---------------------------");
-  console.log("DB_NAME : " + process.env.DB_NAME);
-  console.log("DB_USER : " + process.env.DB_USER);
-  console.log("DB_PASS : " + process.env.DB_PASS);
 
   Object.keys(envConfig).forEach((key) => {
     process.env[key] = envConfig[key];
