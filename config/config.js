@@ -1,6 +1,6 @@
 import config from './config.json' assert { type: 'json' };
 
-const env = process.env.NODE_ENV_PROFILE || "local";
+const env = process.env.NODE_ENV_PROFILE || "test";
 
 if (env === "production" || env === "test"|| env === "local") {
   const envConfig = config[env];

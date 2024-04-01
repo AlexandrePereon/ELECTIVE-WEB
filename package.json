@@ -29,6 +29,7 @@
     "mysql2": "^3.9.2",
     "prom-client": "^15.1.1",
     "sequelize": "^6.37.1",
+    "sqlite3": "^5.1.7",
     "supertest": "^6.3.4",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
