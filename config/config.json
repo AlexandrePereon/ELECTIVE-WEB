@@ -24,8 +24,8 @@
     "JWT_REFRESH_SECRET": "jwt-refresh-key",
     "JWT_REFRESH_TIMEOUT": "7d",
     "DB_DIALECT": "mysql",
-    "DB_USER": "test",
-    "DB_PASS": "test",
+    "DB_USER": "root",
+    "DB_PASS": "root",
     "DB_NAME": "auth",
     "DB_PORT": "3306"
   },
