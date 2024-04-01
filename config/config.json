@@ -1,7 +1,7 @@
 {
   "test": {
     "PORT": 3000,
-    "DB_STORAGE": ":memory:",
+    "DB_STORAGE": "/tests/test.sqlite",
     "BASE_URI": "http://localhost:3000",
     "BASE_ENDPOINT": "/auth",
     "JWT_SECRET": "jwt-key",
