@@ -7,6 +7,13 @@
             "request": "launch",
             "command": "npm run dev",
             "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "node-terminal",
+            "name": "Run Script: test",
+            "request": "launch",
+            "command": "npm run test",
+            "cwd": "${workspaceFolder}"
         }
     ]
 }

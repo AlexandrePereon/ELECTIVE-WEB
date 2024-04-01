@@ -133,7 +133,11 @@ const authController = {
     }
 
     // With url get the socketToken from forwardedUri
-    const { socketToken } = url.parse(forwardedUri, true).query;
+    let socketToken;
+    if (forwardedUri) {
+      const parsedUrl = url.parse(forwardedUri, true).query;
+      socketToken = parsedUrl ? parsedUrl.socketToken : null;
+    }
 
     // check if token is provided
     const bearerToken = req.headers.authorization || socketToken;
