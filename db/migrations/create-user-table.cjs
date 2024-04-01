@@ -70,11 +70,13 @@ module.exports = {
       refreshToken: {
         type: Sequelize.STRING,
         allowNull: true,
+        field: 'refresh_token',
       },
       isBlocked: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false,
+        field: 'is_blocked',
       },
     });
   },

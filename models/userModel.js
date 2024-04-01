@@ -52,11 +52,13 @@ const User = database.define('user', {
   refreshToken: {
     type: sequelize.STRING,
     allowNull: true,
+    field: 'refresh_token',
   },
   isBlocked: {
     type: sequelize.BOOLEAN,
     allowNull: false,
     defaultValue: false,
+    field: 'is_blocked',
   },
 });
 

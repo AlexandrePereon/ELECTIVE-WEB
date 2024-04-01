@@ -3,9 +3,6 @@ import SQLite from 'sqlite3';
 
 export default {
   dialect: process.env.DB_DIALECT,
-  dialectOptions: {
-    mode: SQLite.OPEN_READWRITE,
-  },
   host: process.env.MYSQL_HOST,
   storage: process.env.DB_STORAGE,
   database: process.env.DB_NAME,
