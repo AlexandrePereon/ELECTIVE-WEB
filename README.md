@@ -1,41 +1,51 @@
-#### Snippet of backend(Node.js)`DockerFile`
+# Online Food Ordering Platform
 
-You will find this `DockerFile` file in the root directory of the project.
+This project is a Node.js application that provides a platform for online food ordering. It uses Express.js for the server, Sequelize for interacting with the database, and JWT for authentication.
 
-```bash
-FROM node:13.13.0-stretch-slim
-#Argument that is passed from docer-compose.yaml file
-ARG NODE_PORT
-#Echo the argument to check passed argument loaded here correctly
-RUN echo "Argument port is : $NODE_PORT"
-# Create app directory
-WORKDIR /usr/src/app
-#COPY . .
-COPY . .
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
-RUN npm install
-#In my case my app binds to port NODE_PORT so you'll use the EXPOSE instruction to have it mapped by the docker daemon:
-EXPOSE ${NODE_PORT}
-CMD npm run dev
+## Getting Started
+
+To get started with this project, clone the repository and install the dependencies.
+
+```sh
+git clone <repository-url>
+cd <repository-directory>
+npm install
 ```
 
-##### Explanation of backend(Node.js) `DockerFile`
+## Running the Application
 
-- The first line tells Docker to use another Node image from the [DockerHub](https://hub.docker.com/). We’re using the official Docker image for Node.js and it’s version 10 image.
+You can run the application using the following command:
 
-- On second line we declare argument `NODE_PORT` which we will pass it from `docker-compose`.
+```sh
+npm start
+```
 
-- On third line we log to check argument is successfully read 
+For development, you can use:
 
-- On fourth line we sets a working directory from where the app code will live inside the Docker container.
+```sh
+npm run dev
+```
 
-- On fifth line, we are copying/bundling our code working directory into container working directory on line three.
+## Testing
 
-- On line seven, we run npm install for dependencies in container on line four.
+To run the tests, use the following command:
 
-- On Line eight, we setup the port, that Docker will expose when the container is running. In our case it is the port which we define inside `.env` file, read it from `docker-compose` then passed as a argument to the (backend)`DockerFile`.
+```sh
+npm run test
+```
 
-- And in last, we tell docker to execute our app inside the container by using node to run `npm run dev. It is the command which I registered in __package.json__ in script section.
-###### :clipboard: `Note: For development purpose I used __nodemon__ , If you need to deploy at production you should change CMD from __npm run dev__ to __npm start__.`
+## Application Structure
+
+- `server.js`: The entry point to our application. This file defines our express server and connects it to MySQL database using Sequelize.
+- `config/`: This folder contains configuration for the database and application settings.
+- `routes/`: This folder contains the route definitions for our API.
+- `controllers/`: This folder contains controllers for handling specific routes.
+- `models/`: This folder contains Sequelize models for our application.
+- `middlewares/`: This folder contains custom express middlewares for handling authentication and permissions.
+- `client/`: This folder contains a client for interacting with the restaurant API.
+- `db/`: This folder contains files for interacting with the database.
+- `utils/`: This folder contains utility functions and classes used across the project.
+
+## Docker
+
+A Dockerfile is included for building a Docker image for the application. The `.dockerignore` file contains a list of files and directories that are not copied into the image.
