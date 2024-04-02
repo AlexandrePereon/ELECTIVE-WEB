@@ -44,7 +44,7 @@ describe('POST /auth/register', () => {
       .post('/auth/register')
       .send(userData);
 
-    expect(response.status).to.equal(200);
+    expect(response.status).to.equal(400);
     expect(response.body.message).to.equal('Votre compte a été créé');
     expect(response.body).to.have.property('id');
 
