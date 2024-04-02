@@ -7,14 +7,16 @@ env:
   REPO_NAME: elective-web-auth
 
 jobs:
-  build_and_push:
+  build_test_and_push:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
 
       - name: Build the Docker image
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ env.REPO_NAME }} .
+
+      - name: Run unit tests
+        run: docker run -e NODE_ENV_PROFILE=test ${{ secrets.DOCKER_USERNAME }}/${{ env.REPO_NAME }} npm run test
 
       - name: Log in to Docker Hub
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9

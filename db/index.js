@@ -1,4 +1,4 @@
 import { Sequelize } from 'sequelize';
-import sequelizeConfig from '../config/sequelizeCli.js';
+import sequelizeConfig from '../config/sequelize.js';
 
 export default new Sequelize(sequelizeConfig);
