@@ -1,13 +1,13 @@
 on:
   push:
-    branches: ["dev", "feature/github-actions-test"]
+    branches: ["dev"]
 
 env:
   # GitHub repository name
   REPO_NAME: elective-web-auth
 
 jobs:
-  build_and_push:
+  build_test_and_push:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
