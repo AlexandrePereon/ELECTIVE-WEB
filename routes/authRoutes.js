@@ -269,7 +269,7 @@ authRouter.post('/refresh', authController.refreshToken);
 /**
  * @swagger
  * /auth/suspend:
- *   delete:
+ *   put:
  *     summary: Suspend a user account
  *     description: This endpoint allows the marketing team to suspend a user account. It requires a user ID, verifies the user exists, and then sets the user's isBlocked status to true.
  *     tags: [Moderation]
@@ -333,7 +333,7 @@ authRouter.post('/refresh', authController.refreshToken);
  *                   description: Detailed error message.
  *                   example: 'Internal server error'
  */
-authRouter.delete('/suspend', authMiddleware, isMarketingMiddleware, authController.suspend);
+authRouter.put('/suspend', authMiddleware, isMarketingMiddleware, authController.suspend);
 
 /**
  * @swagger
@@ -493,7 +493,7 @@ authRouter.get('/users', authMiddleware, isMarketingMiddleware, authController.g
  *                 id:
  *                   type: string
  *                   description: The unique identifier of the user.
- *                   example: '1234567890abcdef'
+ *                   example: '2'
  *                 firstName:
  *                   type: string
  *                   description: The first name of the user.
@@ -540,5 +540,103 @@ authRouter.get('/users', authMiddleware, isMarketingMiddleware, authController.g
  *                   example: 'Internal server error'
  */
 authRouter.get('/user', authMiddleware, authController.getUser);
+
+/**
+ * @swagger
+ * /auth/delete:
+ *   delete:
+ *     summary: Delete current user's account
+ *     description: This endpoint allows a user to delete their own account. It uses the user ID from the user's session data to identify and delete the user account. This action is irreversible.
+ *     tags: [Moderation]
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User account successfully deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Utilisateur supprimé'
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Detailed error message.
+ *                   example: 'Utilisateur non trouvé.'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Detailed error message.
+ *                   example: 'Internal server error'
+ */
+authRouter.delete('/delete', authMiddleware, authController.delete);
+
+/**
+ * @swagger
+ * /auth/delete/{id}:
+ *   delete:
+ *     summary: Delete a user account by ID
+ *     description: This endpoint allows the marketing team to delete a user account by its ID. It requires the user ID as a URL parameter and deletes the specified user account. This action is irreversible.
+ *     tags: [Moderation]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The unique identifier of the user to be deleted.
+ *         schema:
+ *           type: string
+ *           example: '1234567890abcdef'
+ *     responses:
+ *       200:
+ *         description: User account successfully deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Utilisateur supprimé'
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Detailed error message.
+ *                   example: 'Utilisateur non trouvé.'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Detailed error message.
+ *                   example: 'Internal server error'
+ */
+authRouter.delete('/delete/:id', authMiddleware, isMarketingMiddleware, authController.deleteById);
 
 export default authRouter;

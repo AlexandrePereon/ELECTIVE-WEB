@@ -268,6 +268,25 @@ const authController = {
     if (!user) return res.status(404).send({ error: 'Utilisateur non trouvé.' });
     return res.status(200).send(user);
   },
+  // DELETE /auth/delete
+  delete: async (req, res) => {
+    const { id } = req.body.userData;
+
+    const user = await User.findByPk(id);
+    if (!user) return res.status(404).send({ error: 'Utilisateur non trouvé.' });
+
+    await user.destroy();
+    return res.status(200).send({ message: 'Utilisateur supprimé' });
+  },
+  // DELETE /auth/delete/:id
+  deleteById: async (req, res) => {
+    const { id } = req.params;
+    const user = await User.findByPk(id);
+    if (!user) return res.status(404).send({ error: 'Utilisateur non trouvé.' });
+
+    await user.destroy();
+    return res.status(200).send({ message: 'Utilisateur supprimé' });
+  },
 };
 
 export default authController;
