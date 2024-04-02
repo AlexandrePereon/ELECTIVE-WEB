@@ -212,9 +212,80 @@ const authController = {
     const user = await User.findByPk(userId);
     if (!user) return res.status(404).send({ error: 'Utilisateur non trouvé.' });
 
-    user.isBlocked = true;
+    let message;
+    user.isBlocked = !user.isBlocked;
+    if (user.isBlocked) {
+      message = 'Utilisateur suspendu';
+    } else {
+      message = 'Utilisateur réactivé';
+    }
+
     await user.save();
-    return res.status(200).send({ message: 'Utilisateur suspendu.' });
+    return res.status(200).send({ message });
+  },
+  // PUT /auth/update
+  update: async (req, res) => {
+    let { userId } = req.body;
+    const { firstName, lastName, email } = req.body;
+
+    if (!userId) userId = req.body.userData.id;
+
+    const user = await User.findByPk(userId);
+    if (!user) return res.status(404).send({ error: 'Utilisateur non trouvé.' });
+
+    // check if email already exists
+    const userEmail = await User.findOne({
+      where: { email },
+    });
+
+    if (userEmail) {
+      return res.status(400).json({
+        message: 'Email déjà utilisé',
+      });
+    }
+
+    if (firstName) user.firstName = firstName;
+    if (lastName) user.lastName = lastName;
+    if (email) user.email = email;
+
+    await user.save();
+    return res.status(200).send({ message: 'Utilisateur mis à jour' });
+  },
+  // GET /auth/users
+  getUsers: async (req, res) => {
+    // Find all users but exclude the password
+    const users = await User.findAll({
+      attributes: { exclude: ['password', 'refreshToken'] },
+    });
+    return res.status(200).send(users);
+  },
+  // GET /auth/user
+  getUser: async (req, res) => {
+    const { id } = req.body.userData;
+    const user = await User.findByPk(id, {
+      attributes: { exclude: ['password', 'refreshToken'] },
+    });
+    if (!user) return res.status(404).send({ error: 'Utilisateur non trouvé.' });
+    return res.status(200).send(user);
+  },
+  // DELETE /auth/delete
+  delete: async (req, res) => {
+    const { id } = req.body.userData;
+
+    const user = await User.findByPk(id);
+    if (!user) return res.status(404).send({ error: 'Utilisateur non trouvé.' });
+
+    await user.destroy();
+    return res.status(200).send({ message: 'Utilisateur supprimé' });
+  },
+  // DELETE /auth/delete/:id
+  deleteById: async (req, res) => {
+    const { id } = req.params;
+    const user = await User.findByPk(id);
+    if (!user) return res.status(404).send({ error: 'Utilisateur non trouvé.' });
+
+    await user.destroy();
+    return res.status(200).send({ message: 'Utilisateur supprimé' });
   },
 };
 
