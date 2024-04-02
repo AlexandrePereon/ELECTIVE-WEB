@@ -272,7 +272,7 @@ authRouter.post('/refresh', authController.refreshToken);
  *   delete:
  *     summary: Suspend a user account
  *     description: This endpoint allows the marketing team to suspend a user account. It requires a user ID, verifies the user exists, and then sets the user's isBlocked status to true.
- *     tags: [Auth]
+ *     tags: [Moderation]
  *     security:
  *       - BearerAuth: []
  *     requestBody:
@@ -287,7 +287,7 @@ authRouter.post('/refresh', authController.refreshToken);
  *               userId:
  *                 type: string
  *                 description: The unique identifier of the user to be suspended.
- *                 example: '1234567890abcdef'
+ *                 example: '2'
  *     responses:
  *       200:
  *         description: User successfully suspended
@@ -334,5 +334,211 @@ authRouter.post('/refresh', authController.refreshToken);
  *                   example: 'Internal server error'
  */
 authRouter.delete('/suspend', authMiddleware, isMarketingMiddleware, authController.suspend);
+
+/**
+ * @swagger
+ * /auth/update:
+ *   put:
+ *     summary: Update user details
+ *     description: This endpoint allows the marketing team or the user themselves to update user details including first name, last name, and email. It requires a user ID and any of the fields to update. If no user ID is provided, the operation assumes the request is for the current user.
+ *     tags: [Moderation]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 description: The unique identifier of the user to be updated. This field is optional if the user is updating their own details.
+ *                 example: '2'
+ *               firstName:
+ *                 type: string
+ *                 description: The first name of the user.
+ *                 example: 'John2'
+ *               lastName:
+ *                 type: string
+ *                 description: The last name of the user.
+ *                 example: 'Doe2'
+ *               email:
+ *                 type: string
+ *                 description: The email address of the user.
+ *                 example: 'john2.doe2@example.com'
+ *     responses:
+ *       200:
+ *         description: User details successfully updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Utilisateur mis à jour'
+ *       400:
+ *         description: Validation error such as missing required fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Detailed error message.
+ *                   example: 'Données manquantes pour la mise à jour'
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Detailed error message.
+ *                   example: 'Utilisateur non trouvé.'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Detailed error message.
+ *                   example: 'Internal server error'
+ */
+authRouter.put('/update', authMiddleware, isMarketingMiddleware, authController.update);
+
+/**
+ * @swagger
+ * /auth/users:
+ *   get:
+ *     summary: Retrieve all users
+ *     description: This endpoint allows the marketing team to retrieve all user profiles excluding their passwords. It is protected and requires marketing team authorization.
+ *     tags: [Moderation]
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of all users excluding passwords
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                     description: The unique identifier of the user.
+ *                     example: '1'
+ *                   firstName:
+ *                     type: string
+ *                     description: The first name of the user.
+ *                     example: 'John'
+ *                   lastName:
+ *                     type: string
+ *                     description: The last name of the user.
+ *                     example: 'Doe'
+ *                   email:
+ *                     type: string
+ *                     description: The email address of the user.
+ *                     example: 'john.doe@example.com'
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *                     description: The date and time when the user was created.
+ *                     example: '2021-03-22T14:48:00.000Z'
+ *                   updatedAt:
+ *                     type: string
+ *                     format: date-time
+ *                     description: The date and time when the user profile was last updated.
+ *                     example: '2021-04-05T10:20:30.000Z'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Detailed error message.
+ *                   example: 'Internal server error'
+ */
+authRouter.get('/users', authMiddleware, isMarketingMiddleware, authController.getUsers);
+
+/**
+ * @swagger
+ * /auth/user:
+ *   get:
+ *     summary: Retrieve current user's profile
+ *     description: This endpoint allows a user to retrieve their own profile. It uses the user ID from the user's session data, making it unnecessary to pass the user ID as part of the request.
+ *     tags: [Moderation]
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User profile data excluding password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   description: The unique identifier of the user.
+ *                   example: '1234567890abcdef'
+ *                 firstName:
+ *                   type: string
+ *                   description: The first name of the user.
+ *                   example: 'John'
+ *                 lastName:
+ *                   type: string
+ *                   description: The last name of the user.
+ *                   example: 'Doe'
+ *                 email:
+ *                   type: string
+ *                   description: The email address of the user.
+ *                   example: 'john.doe@example.com'
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: The date and time when the user was created.
+ *                   example: '2021-03-22T14:48:00.000Z'
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: The date and time when the user profile was last updated.
+ *                   example: '2021-04-05T10:20:30.000Z'
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Detailed error message.
+ *                   example: 'Utilisateur non trouvé.'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Detailed error message.
+ *                   example: 'Internal server error'
+ */
+authRouter.get('/user', authMiddleware, authController.getUser);
 
 export default authRouter;
