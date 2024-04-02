@@ -116,6 +116,7 @@ const authController = {
       },
     });
   },
+  // GET /auth/verify
   verify: async (req, res) => {
     // get X-Forwarded-Uri and compare it with openRoutes
     const forwardedUri = req.headers['x-forwarded-uri'];
@@ -185,6 +186,7 @@ const authController = {
       });
     }
   },
+  // POST /auth/logout
   refreshToken: async (req, res) => {
     const { refreshToken } = req.body;
     if (!refreshToken) return res.status(401).send({ error: 'Un refresh token est requis.' });
@@ -201,6 +203,18 @@ const authController = {
     } catch (error) {
       return res.status(401).send({ error: 'Le refresh token est invalide.' });
     }
+  },
+  // DELETE /auth/suspend
+  suspend: async (req, res) => {
+    const { userId } = req.body;
+    if (!userId) return res.status(400).send({ error: 'Un identifiant utilisateur est requis.' });
+
+    const user = await User.findByPk(userId);
+    if (!user) return res.status(404).send({ error: 'Utilisateur non trouvé.' });
+
+    user.isBlocked = true;
+    await user.save();
+    return res.status(200).send({ message: 'Utilisateur suspendu.' });
   },
 };
 

@@ -1,5 +1,7 @@
 import express from 'express';
 import authController from '../controllers/authController.js';
+import isMarketingMiddleware from '../middlewares/isMarketingMiddleware.js';
+import authMiddleware from '../middlewares/authMiddleware.js';
 
 const authRouter = express.Router();
 
@@ -263,5 +265,74 @@ authRouter.get('/verify', authController.verify);
  *       []
  */
 authRouter.post('/refresh', authController.refreshToken);
+
+/**
+ * @swagger
+ * /auth/suspend:
+ *   delete:
+ *     summary: Suspend a user account
+ *     description: This endpoint allows the marketing team to suspend a user account. It requires a user ID, verifies the user exists, and then sets the user's isBlocked status to true.
+ *     tags: [Auth]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 description: The unique identifier of the user to be suspended.
+ *                 example: '1234567890abcdef'
+ *     responses:
+ *       200:
+ *         description: User successfully suspended
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Utilisateur suspendu.'
+ *       400:
+ *         description: Validation error such as missing user ID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Detailed error message.
+ *                   example: 'Un identifiant utilisateur est requis.'
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Detailed error message.
+ *                   example: 'Utilisateur non trouvé.'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Detailed error message.
+ *                   example: 'Internal server error'
+ */
+authRouter.delete('/suspend', authMiddleware, isMarketingMiddleware, authController.suspend);
 
 export default authRouter;
