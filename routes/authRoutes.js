@@ -646,7 +646,4 @@ authRouter.delete('/delete', authMiddleware, authController.delete);
  *                   example: 'Internal server error'
  */
 authRouter.delete('/delete/:id', authMiddleware, isMarketingMiddleware, authController.deleteById);
-
-authRouter.delete('/restaurant/delete', authMiddleware, authController.deleteUserRestaurant);
-
 export default authRouter;
