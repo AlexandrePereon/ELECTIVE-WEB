@@ -306,6 +306,22 @@ const authController = {
     await user.destroy();
     return res.status(200).send({ message: 'Utilisateur supprimé' });
   },
+
+  // DELETE /auth/restaurant/delete
+  deleteUserRestaurant: async (req, res) => {
+    console.log('DeleteResto');
+    const { id } = req.body.userData;
+    const user = await User.findByPk(id);
+    if (!user) return res.status(404).send({ error: 'Utilisateur non trouvé.' });
+
+    console.log(user);
+    user.restaurant = null;
+    console.log(user);
+
+    await user.save();
+    logger.log('info', 'Restaurant de l\'utilisateur supprimé', { userID: user.id });
+    return res.status(200).send({ message: 'Restaurant de l\'utilisateur supprimé' });
+  },
 };
 
 export default authController;

@@ -647,4 +647,6 @@ authRouter.delete('/delete', authMiddleware, authController.delete);
  */
 authRouter.delete('/delete/:id', authMiddleware, isMarketingMiddleware, authController.deleteById);
 
+authRouter.delete('/restaurant/delete', authMiddleware, authController.deleteUserRestaurant);
+
 export default authRouter;
