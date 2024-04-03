@@ -252,7 +252,7 @@ describe('POST /auth/refresh-token', () => {
       .post('/auth/refresh')
       .send({ refreshToken: userData.refreshToken });
 
-    expect(response.status).to.equal(403);
+    expect(response.status).to.equal(401);
     expect(response.body.error).to.equal('Votre compte a été bloqué.');
 
     await user.update({ isBlocked: false });

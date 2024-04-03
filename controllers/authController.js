@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import '../config/config.js';
 import crypto from 'crypto';
 import url from 'url';
+import { Op } from 'sequelize';
 import User from '../models/userModel.js';
 import openRoutes from '../config/openRoutes.js';
 // eslint-disable-next-line import/no-named-as-default, import/no-named-as-default-member
@@ -196,7 +197,7 @@ const authController = {
       const user = await User.findOne({ where: { id: decoded.id, refreshToken } });
 
       if (!user) return res.status(401).send({ error: 'Le refresh token est invalide.' });
-      if (user.isBlocked) return res.status(403).send({ error: 'Votre compte a été bloqué.' });
+      if (user.isBlocked) return res.status(401).send({ error: 'Votre compte a été bloqué.' });
 
       const newToken = jwt.sign({ id: user.id.toString() }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_TIMEOUT });
       return res.send({ token: newToken, message: 'Token rafraichi' });
@@ -244,7 +245,7 @@ const authController = {
     // check if email already exists
     if (email) {
       const userEmail = await User.findOne({
-        where: { email },
+        where: { email, id: { [Op.not]: userId } },
       });
       if (userEmail) {
         return res.status(400).json({
