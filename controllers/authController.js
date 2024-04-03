@@ -242,14 +242,15 @@ const authController = {
     if (!user) return res.status(404).send({ error: 'Utilisateur non trouvé.' });
 
     // check if email already exists
-    const userEmail = await User.findOne({
-      where: { email },
-    });
-
-    if (userEmail) {
-      return res.status(400).json({
-        message: 'Email déjà utilisé',
+    if (email) {
+      const userEmail = await User.findOne({
+        where: { email },
       });
+      if (userEmail) {
+        return res.status(400).json({
+          message: 'Email déjà utilisé',
+        });
+      }
     }
 
     if (firstName) user.firstName = firstName;
