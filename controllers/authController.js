@@ -94,7 +94,7 @@ const authController = {
       });
     }
 
-    if (user.role === 'restaurant' && user.restaurant === null) {
+    if (user.role === 'restaurant') {
       logger.log('info', 'Récupération restaurant', { userID: user.id });
       const restaurant = await restaurantClient.getRestaurantByCreatorId(user.id);
       user.restaurant = restaurant ? restaurant._id : null;
@@ -306,18 +306,6 @@ const authController = {
 
     await user.destroy();
     return res.status(200).send({ message: 'Utilisateur supprimé' });
-  },
-
-  // DELETE /auth/restaurant/delete
-  deleteUserRestaurant: async (req, res) => {
-    const { id } = req.body.userData;
-    const user = await User.findByPk(id);
-    if (!user) return res.status(404).send({ error: 'Utilisateur non trouvé.' });
-    user.restaurant = null;
-
-    await user.save();
-    logger.log('info', 'Restaurant de l\'utilisateur supprimé', { userID: user.id });
-    return res.status(200).send({ message: 'Restaurant de l\'utilisateur supprimé' });
   },
 };
 
