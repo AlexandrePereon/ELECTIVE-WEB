@@ -226,7 +226,15 @@ const authController = {
   // PUT /auth/update
   update: async (req, res) => {
     let { userId } = req.body;
-    const { firstName, lastName, email } = req.body;
+    const {
+      firstName, lastName, email, currentPassword, newPassword,
+    } = req.body;
+
+    if (req.body.userData.role === 'marketing') {
+      if (!userId) userId = req.body.userData.id;
+    } else {
+      userId = req.body.userData.id;
+    }
 
     if (!userId) userId = req.body.userData.id;
 
@@ -247,6 +255,16 @@ const authController = {
     if (firstName) user.firstName = firstName;
     if (lastName) user.lastName = lastName;
     if (email) user.email = email;
+
+    if (currentPassword && newPassword) {
+      const validPassword = await bcrypt.compare(currentPassword, user.password);
+      if (!validPassword) {
+        return res.status(400).json({
+          message: 'Mot de passe incorrect',
+        });
+      }
+      user.password = await bcrypt.hash(newPassword, 10);
+    }
 
     await user.save();
     return res.status(200).send({ message: 'Utilisateur mis à jour' });

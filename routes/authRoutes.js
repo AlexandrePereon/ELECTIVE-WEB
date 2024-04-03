@@ -367,6 +367,14 @@ authRouter.put('/suspend', authMiddleware, isMarketingMiddleware, authController
  *                 type: string
  *                 description: The email address of the user.
  *                 example: 'john2.doe2@example.com'
+ *               currentPassword:
+ *                 type: string
+ *                 description: The current password of the user. Required for user to update their password.
+ *                 example: 'SecurePassword123!'
+ *               newPassword:
+ *                 type: string
+ *                 description: The new password of the user. Required for user to update their password.
+ *                 example: 'SecurePassword1234!'
  *     responses:
  *       200:
  *         description: User details successfully updated
@@ -412,7 +420,7 @@ authRouter.put('/suspend', authMiddleware, isMarketingMiddleware, authController
  *                   description: Detailed error message.
  *                   example: 'Internal server error'
  */
-authRouter.put('/update', authMiddleware, isMarketingMiddleware, authController.update);
+authRouter.put('/update', authMiddleware, authController.update);
 
 /**
  * @swagger
