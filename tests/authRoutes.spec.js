@@ -190,7 +190,7 @@ describe('GET /auth/verify', () => {
       .get('/auth/verify')
       .set('Authorization', `Bearer ${userData.token}`);
 
-    expect(response.status).to.equal(400);
+    expect(response.status).to.equal(401);
     expect(response.body.message).to.equal('Votre compte a été bloqué');
 
     await user.update({ isBlocked: false });

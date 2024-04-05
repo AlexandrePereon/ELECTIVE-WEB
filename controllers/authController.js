@@ -160,7 +160,7 @@ const authController = {
 
       // check if user is blocked
       if (user.isBlocked) {
-        return res.status(400).json({
+        return res.status(401).json({
           message: 'Votre compte a été bloqué',
         });
       }
