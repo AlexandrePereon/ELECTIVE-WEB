@@ -182,7 +182,7 @@ const authController = {
 
       return res.status(200).json(verified);
     } catch (err) {
-      return res.status(400).json({
+      return res.status(401).json({
         message: 'Token invalide',
       });
     }
