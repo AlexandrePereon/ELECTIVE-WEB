@@ -282,12 +282,34 @@ const authController = {
   // GET /auth/user
   getUser: async (req, res) => {
     const { id } = req.body.userData;
-    const user = await User.findByPk(id, {
-      attributes: { exclude: ['password', 'refreshToken'] },
-    });
-    if (!user) return res.status(404).send({ error: 'Utilisateur non trouvé.' });
-    return res.status(200).send(user);
+
+    try {
+      const user = await User.findByPk(id, {
+        attributes: { exclude: ['password', 'refreshToken'] },
+      });
+
+      if (!user) {
+        return res.status(404).send({ error: 'Utilisateur non trouvé.' });
+      }
+
+      // Sous-requête pour compter le nombre de personnes parrainées
+      const partnerNumber = await User.count({
+        where: { partnerId: id },
+      });
+
+      // Ajouter le nombre de personnes parrainées dans le retour de la requête
+      const userDataWithReferrals = {
+        ...user.toJSON(),
+        partnerNumber,
+      };
+
+      return res.status(200).send(userDataWithReferrals);
+    } catch (error) {
+      console.error('Erreur lors de la récupération de l\'utilisateur:', error);
+      return res.status(500).send({ error: 'Erreur lors de la récupération de l\'utilisateur.' });
+    }
   },
+
   // DELETE /auth/delete
   delete: async (req, res) => {
     const { id } = req.body.userData;
