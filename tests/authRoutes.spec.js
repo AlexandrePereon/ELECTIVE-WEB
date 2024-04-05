@@ -178,7 +178,7 @@ describe('GET /auth/verify', () => {
       .get('/auth/verify')
       .set('Authorization', 'Bearer invalidToken');
 
-    expect(response.status).to.equal(400);
+    expect(response.status).to.equal(401);
     expect(response.body.message).to.equal('Token invalide');
   });
 
