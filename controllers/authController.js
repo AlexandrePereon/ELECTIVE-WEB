@@ -285,7 +285,8 @@ const authController = {
 
     try {
       const user = await User.findByPk(id, {
-        attributes: { exclude: ['password', 'refreshToken'] },
+        attributes: { exclude: ['password', 'refreshToken', 'partnerId'] },
+        include: [{ model: User, as: 'partner', attributes: ['id', 'firstName', 'lastName'] }],
       });
 
       if (!user) {
