@@ -258,7 +258,7 @@ const authController = {
     if (lastName) user.lastName = lastName;
     if (email) user.email = email;
 
-    if (currentPassword && newPassword) {
+    if (currentPassword && newPassword && user.id === req.body.userData.id) {
       const validPassword = await bcrypt.compare(currentPassword, user.password);
       if (!validPassword) {
         return res.status(400).json({
