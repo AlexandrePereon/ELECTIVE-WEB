@@ -551,6 +551,82 @@ authRouter.get('/user', authMiddleware, authController.getUser);
 
 /**
  * @swagger
+ * /auth/user/{id}:
+ *   get:
+ *     summary: Retrieve a user profile by ID
+ *     description: This endpoint allows the marketing team to retrieve a user profile by its ID. It requires the user ID as a URL parameter and returns the user profile data excluding the password.
+ *     tags: [Moderation]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The unique identifier of the user to retrieve.
+ *         schema:
+ *           type: string
+ *           example: '8'
+ *     responses:
+ *       200:
+ *         description: User profile data excluding password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   description: The unique identifier of the user.
+ *                   example: '2'
+ *                 firstName:
+ *                   type: string
+ *                   description: The first name of the user.
+ *                   example: 'John'
+ *                 lastName:
+ *                   type: string
+ *                   description: The last name of the user.
+ *                   example: 'Doe'
+ *                 email:
+ *                   type: string
+ *                   description: The email address of the user.
+ *                   example: 'john.doe@example.com'
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: The date and time when the user was created.
+ *                   example: '2021-03-22T14:48:00.000Z'
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: The date and time when the user profile was last updated.
+ *                   example: '2021-04-05T10:20:30.000Z'
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Detailed error message.
+ *                   example: 'Utilisateur non trouvé.'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Detailed error message.
+ *                   example: 'Internal server error'
+ */
+authRouter.get('/user/:id', authMiddleware, isMarketingMiddleware, authController.getUserById);
+
+/**
+ * @swagger
  * /auth/delete:
  *   delete:
  *     summary: Delete current user's account
@@ -610,7 +686,7 @@ authRouter.delete('/delete', authMiddleware, authController.delete);
  *         description: The unique identifier of the user to be deleted.
  *         schema:
  *           type: string
- *           example: '1234567890abcdef'
+ *           example: '8'
  *     responses:
  *       200:
  *         description: User account successfully deleted
