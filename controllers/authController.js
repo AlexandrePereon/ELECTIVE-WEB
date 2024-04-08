@@ -146,6 +146,7 @@ const authController = {
     const token = bearerToken ? bearerToken.replace('Bearer ', '') : null;
 
     if (!token) {
+      logger.log('info', 'Token non fourni');
       return res.status(401).json({
         message: 'Accès refusé',
       });
@@ -160,6 +161,7 @@ const authController = {
 
       // check if user is blocked
       if (user.isBlocked) {
+        logger.log('info', 'Utilisateur bloqué', { userID: user.id });
         return res.status(401).json({
           message: 'Votre compte a été bloqué',
         });
@@ -182,6 +184,7 @@ const authController = {
 
       return res.status(200).json(verified);
     } catch (err) {
+      logger.log('info', 'Token invalide', { error: err });
       return res.status(401).json({
         message: 'Token invalide',
       });
