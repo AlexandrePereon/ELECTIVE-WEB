@@ -11,7 +11,7 @@ import restaurantClient from '../client/restaurantClient.js';
 import logger from '../utils/logger/logger.js';
 
 const authController = {
-  // POST /auth/register
+  // POST /api-auth/register
   register: async (req, res) => {
     // check if username or email already exists
     const userExists = await User.findOne({
@@ -66,7 +66,7 @@ const authController = {
       return res.status(400).json({ message: err });
     }
   },
-  // POST /auth/login
+  // POST /api-auth/login
   login: async (req, res) => {
     logger.log('info', 'Demande de connexion', { userEmail: req.body.email });
     // check if username exists
@@ -117,7 +117,7 @@ const authController = {
       },
     });
   },
-  // GET /auth/verify
+  // GET /api-auth/verify
   verify: async (req, res) => {
     // get X-Forwarded-Uri and compare it with openRoutes
     const forwardedUri = req.headers['x-forwarded-uri'];
@@ -189,7 +189,7 @@ const authController = {
       });
     }
   },
-  // POST /auth/logout
+  // POST /api-auth/logout
   refreshToken: async (req, res) => {
     const { refreshToken } = req.body;
     if (!refreshToken) return res.status(401).send({ error: 'Un refresh token est requis.' });
@@ -207,7 +207,7 @@ const authController = {
       return res.status(401).send({ error: 'Le refresh token est invalide.' });
     }
   },
-  // DELETE /auth/suspend
+  // DELETE /api-auth/suspend
   suspend: async (req, res) => {
     const { userId } = req.body;
     if (!userId) return res.status(400).send({ error: 'Un identifiant utilisateur est requis.' });
@@ -226,7 +226,7 @@ const authController = {
     await user.save();
     return res.status(200).send({ message });
   },
-  // PUT /auth/update
+  // PUT /api-auth/update
   update: async (req, res) => {
     let { userId } = req.body;
     const {
@@ -273,7 +273,7 @@ const authController = {
     await user.save();
     return res.status(200).send({ message: 'Utilisateur mis à jour' });
   },
-  // GET /auth/users
+  // GET /api-auth/users
   getUsers: async (req, res) => {
     // Find all users but exclude the password
     const users = await User.findAll({
@@ -281,7 +281,7 @@ const authController = {
     });
     return res.status(200).send(users);
   },
-  // GET /auth/user
+  // GET /api-auth/user
   getUser: async (req, res) => {
     const { id } = req.body.userData;
 
@@ -312,7 +312,7 @@ const authController = {
       return res.status(500).send({ error: 'Erreur lors de la récupération de l\'utilisateur.' });
     }
   },
-  // GET /auth/user/:id
+  // GET /api-auth/user/:id
   getUserById: async (req, res) => {
     const { id } = req.params;
 
@@ -343,7 +343,7 @@ const authController = {
       return res.status(500).send({ error: 'Erreur lors de la récupération de l\'utilisateur.' });
     }
   },
-  // DELETE /auth/delete
+  // DELETE /api-auth/delete
   delete: async (req, res) => {
     const { id } = req.body.userData;
 
@@ -353,7 +353,7 @@ const authController = {
     await user.destroy();
     return res.status(200).send({ message: 'Utilisateur supprimé' });
   },
-  // DELETE /auth/delete/:id
+  // DELETE /api-auth/delete/:id
   deleteById: async (req, res) => {
     const { id } = req.params;
     const user = await User.findByPk(id);

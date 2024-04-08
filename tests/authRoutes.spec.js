@@ -28,7 +28,7 @@ const partnerData = {
   role: 'user',
 };
 
-describe('POST /auth/register', () => {
+describe('POST /api-auth/register', () => {
   before((done) => {
     app.on('dbReady', () => {
       User.destroy({ where: { email: [userData.email, partnerData.email] } }).then(() => {
@@ -41,7 +41,7 @@ describe('POST /auth/register', () => {
 
   it('should successfully register a new user', async () => {
     const response = await request(app)
-      .post('/auth/register')
+      .post('/api-auth/register')
       .send(userData);
 
     expect(response.status).to.equal(200);
@@ -53,7 +53,7 @@ describe('POST /auth/register', () => {
 
   it('should return error for already used email', async () => {
     const response = await request(app)
-      .post('/auth/register')
+      .post('/api-auth/register')
       .send({
         firstName: partnerData.firstName,
         lastName: partnerData.lastName,
@@ -68,7 +68,7 @@ describe('POST /auth/register', () => {
 
   it('should return error for invalid partner code', async () => {
     const response = await request(app)
-      .post('/auth/register')
+      .post('/api-auth/register')
       .send({
         firstName: partnerData.firstName,
         lastName: partnerData.lastName,
@@ -85,7 +85,7 @@ describe('POST /auth/register', () => {
   it('should return error when partner code belongs to user with different role', async () => {
     const user = await User.findOne({ where: { email: userData.email } });
     const response = await request(app)
-      .post('/auth/register')
+      .post('/api-auth/register')
       .send({
         firstName: partnerData.firstName,
         lastName: partnerData.lastName,
@@ -100,10 +100,10 @@ describe('POST /auth/register', () => {
   });
 });
 
-describe('POST /auth/login', () => {
+describe('POST /api-auth/login', () => {
   it('should return error for non-existent user', async () => {
     const response = await request(app)
-      .post('/auth/login')
+      .post('/api-auth/login')
       .send({
         email: 'wrong@email.com',
         password: 'wrongPassword',
@@ -115,7 +115,7 @@ describe('POST /auth/login', () => {
 
   it('should successfully log in user', async () => {
     const response = await request(app)
-      .post('/auth/login')
+      .post('/api-auth/login')
       .send({ email: userData.email, password: userData.password });
 
     expect(response.status).to.equal(200);
@@ -136,7 +136,7 @@ describe('POST /auth/login', () => {
     const user = await User.findOne({ where: { email: userData.email } });
     await user.update({ isBlocked: true });
     const response = await request(app)
-      .post('/auth/login')
+      .post('/api-auth/login')
       .send({ email: userData.email, password: userData.password });
 
     expect(response.status).to.equal(400);
@@ -147,7 +147,7 @@ describe('POST /auth/login', () => {
 
   it('should return error for incorrect password', async () => {
     const response = await request(app)
-      .post('/auth/login')
+      .post('/api-auth/login')
       .send({ email: userData.email, password: 'wrongPassword' });
 
     expect(response.status).to.equal(400);
@@ -155,11 +155,11 @@ describe('POST /auth/login', () => {
   });
 });
 
-describe('GET /auth/verify', () => {
+describe('GET /api-auth/verify', () => {
   it('should allow access for open routes', async () => {
     const openRouteExample = openRoutes[0]; // Assuming there's at least one open route for testing
     const response = await request(app)
-      .get('/auth/verify')
+      .get('/api-auth/verify')
       .set('x-forwarded-uri', openRouteExample.path)
       .set('x-forwarded-method', openRouteExample.method);
 
@@ -168,14 +168,14 @@ describe('GET /auth/verify', () => {
   });
 
   it('should deny access when no token is provided', async () => {
-    const response = await request(app).get('/auth/verify');
+    const response = await request(app).get('/api-auth/verify');
     expect(response.status).to.equal(401);
     expect(response.body.message).to.equal('Accès refusé');
   });
 
   it('should deny access with invalid token', async () => {
     const response = await request(app)
-      .get('/auth/verify')
+      .get('/api-auth/verify')
       .set('Authorization', 'Bearer invalidToken');
 
     expect(response.status).to.equal(401);
@@ -187,7 +187,7 @@ describe('GET /auth/verify', () => {
     await user.update({ isBlocked: true });
 
     const response = await request(app)
-      .get('/auth/verify')
+      .get('/api-auth/verify')
       .set('Authorization', `Bearer ${userData.token}`);
 
     expect(response.status).to.equal(401);
@@ -197,7 +197,7 @@ describe('GET /auth/verify', () => {
   });
 
   it('should verify the user token', async () => {
-    const response = await request(app).get('/auth/verify').set('Authorization', `Bearer ${userData.token}`);
+    const response = await request(app).get('/api-auth/verify').set('Authorization', `Bearer ${userData.token}`);
 
     expect(response.status).to.equal(200);
     expect(response.body).to.have.property('id', userData.id);
@@ -207,7 +207,7 @@ describe('GET /auth/verify', () => {
 
   it('should grant access with a valid token', async () => {
     const response = await request(app)
-      .get('/auth/verify')
+      .get('/api-auth/verify')
       .set('Authorization', `Bearer ${userData.token}`);
 
     expect(response.status).to.equal(200);
@@ -226,10 +226,10 @@ describe('GET /auth/verify', () => {
   });
 });
 
-describe('POST /auth/refresh-token', () => {
+describe('POST /api-auth/refresh-token', () => {
   it('should deny access when no refresh token is provided', async () => {
     const response = await request(app)
-      .post('/auth/refresh')
+      .post('/api-auth/refresh')
       .send({});
 
     expect(response.status).to.equal(401);
@@ -238,7 +238,7 @@ describe('POST /auth/refresh-token', () => {
 
   it('should deny access with invalid refresh token', async () => {
     const response = await request(app)
-      .post('/auth/refresh')
+      .post('/api-auth/refresh')
       .send({ refreshToken: 'invalidToken' });
 
     expect(response.status).to.equal(401);
@@ -249,7 +249,7 @@ describe('POST /auth/refresh-token', () => {
     const user = await User.findOne({ where: { email: userData.email } });
     await user.update({ isBlocked: true });
     const response = await request(app)
-      .post('/auth/refresh')
+      .post('/api-auth/refresh')
       .send({ refreshToken: userData.refreshToken });
 
     expect(response.status).to.equal(401);
@@ -260,7 +260,7 @@ describe('POST /auth/refresh-token', () => {
 
   it('should refresh token for a valid request', async () => {
     const response = await request(app)
-      .post('/auth/refresh')
+      .post('/api-auth/refresh')
       .send({ refreshToken: userData.refreshToken });
 
     expect(response.status).to.equal(200);
