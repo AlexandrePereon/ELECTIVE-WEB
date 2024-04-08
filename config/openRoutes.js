@@ -2,8 +2,8 @@
 
 const openRoutes = [
   { path: '/', method: 'OPTIONS' },
-  { path: '/restaurant/', method: 'GET' },
-  { path: '/order/api-docs', method: 'GET' },
+  { path: '/api-restaurant/', method: 'GET' },
+  { path: '/api-order/api-docs', method: 'GET' },
   { path: '/api-auth/api-docs', method: 'GET' },
   { path: '/api-auth/register', method: 'POST' },
   { path: '/api-auth/login', method: 'POST' },
