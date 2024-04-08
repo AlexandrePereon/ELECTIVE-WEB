@@ -1,13 +1,13 @@
 import express from 'express';
-import authController from '../controllers/authController.js';
+import authController from '../controllers/api-authController.js';
 import isMarketingMiddleware from '../middlewares/isMarketingMiddleware.js';
-import authMiddleware from '../middlewares/authMiddleware.js';
+import authMiddleware from '../middlewares/api-authMiddleware.js';
 
 const authRouter = express.Router();
 
 /**
  * @swagger
- * /auth/register:
+ * /api-auth/register:
  *   post:
  *     summary: Register a new user
  *     description: This endpoint registers a new user by their firstName, lastName, email, and password. It checks if the email already exists to avoid duplicates. Upon successful registration, it returns the user's unique identifier.
@@ -76,7 +76,7 @@ authRouter.post('/register', authController.register);
 
 /**
  * @swagger
- * /auth/login:
+ * /api-auth/login:
  *   post:
  *     summary: Login a user
  *     description: This endpoint authenticates a user by their email and password. It checks if the user exists and if the password is correct. Upon successful authentication, it returns a JWT token.
@@ -157,7 +157,7 @@ authRouter.post('/login', authController.login);
 
 /**
  * @swagger
- * /auth/verify:
+ * /api-auth/verify:
  *   get:
  *     summary: Verify a user's token and return user information
  *     description: This endpoint verifies the validity of a user's JWT token and returns the decoded token information. If the request targets a public route, no token verification is performed, and the request is allowed. For protected routes, it requires a JWT token to be provided in the Authorization header. Upon successful verification, user details are returned in the response headers.
@@ -211,7 +211,7 @@ authRouter.get('/verify', authController.verify);
 
 /**
  * @swagger
- * /auth/refresh:
+ * /api-auth/refresh:
  *   post:
  *     summary: Refresh a user's JWT token using a refresh token
  *     description: This endpoint refreshes a user's JWT token. It requires a refresh token to be provided in the request body. If the refresh token is valid and the user is not blocked, it generates a new JWT token with a specified expiry and returns it in the response body. If the refresh token is missing, invalid, or the user is blocked, it denies access with appropriate status codes and messages.
@@ -268,7 +268,7 @@ authRouter.post('/refresh', authController.refreshToken);
 
 /**
  * @swagger
- * /auth/suspend:
+ * /api-auth/suspend:
  *   put:
  *     summary: Suspend a user account
  *     description: This endpoint allows the marketing team to suspend a user account. It requires a user ID, verifies the user exists, and then sets the user's isBlocked status to true.
@@ -337,7 +337,7 @@ authRouter.put('/suspend', authMiddleware, isMarketingMiddleware, authController
 
 /**
  * @swagger
- * /auth/update:
+ * /api-auth/update:
  *   put:
  *     summary: Update user details
  *     description: This endpoint allows the marketing team or the user themselves to update user details including first name, last name, and email. It requires a user ID and any of the fields to update. If no user ID is provided, the operation assumes the request is for the current user.
@@ -424,7 +424,7 @@ authRouter.put('/update', authMiddleware, authController.update);
 
 /**
  * @swagger
- * /auth/users:
+ * /api-auth/users:
  *   get:
  *     summary: Retrieve all users
  *     description: This endpoint allows the marketing team to retrieve all user profiles excluding their passwords. It is protected and requires marketing team authorization.
@@ -483,7 +483,7 @@ authRouter.get('/users', authMiddleware, isMarketingMiddleware, authController.g
 
 /**
  * @swagger
- * /auth/user:
+ * /api-auth/user:
  *   get:
  *     summary: Retrieve current user's profile
  *     description: This endpoint allows a user to retrieve their own profile. It uses the user ID from the user's session data, making it unnecessary to pass the user ID as part of the request.
@@ -551,7 +551,7 @@ authRouter.get('/user', authMiddleware, authController.getUser);
 
 /**
  * @swagger
- * /auth/user/{id}:
+ * /api-auth/user/{id}:
  *   get:
  *     summary: Retrieve a user profile by ID
  *     description: This endpoint allows the marketing team to retrieve a user profile by its ID. It requires the user ID as a URL parameter and returns the user profile data excluding the password.
@@ -627,7 +627,7 @@ authRouter.get('/user/:id', authMiddleware, isMarketingMiddleware, authControlle
 
 /**
  * @swagger
- * /auth/delete:
+ * /api-auth/delete:
  *   delete:
  *     summary: Delete current user's account
  *     description: This endpoint allows a user to delete their own account. It uses the user ID from the user's session data to identify and delete the user account. This action is irreversible.
@@ -672,7 +672,7 @@ authRouter.delete('/delete', authMiddleware, authController.delete);
 
 /**
  * @swagger
- * /auth/delete/{id}:
+ * /api-auth/delete/{id}:
  *   delete:
  *     summary: Delete a user account by ID
  *     description: This endpoint allows the marketing team to delete a user account by its ID. It requires the user ID as a URL parameter and deletes the specified user account. This action is irreversible.
