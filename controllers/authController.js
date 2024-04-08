@@ -125,10 +125,9 @@ const authController = {
 
     logger.log('info', `URL demandée : ${forwardedUri}`);
     logger.log('info', `Verbe HTTP : ${method}`);
-    logger.log('info', { header: req.headers });
 
     if (forwardedUri && openRoutes.some((route) => forwardedUri.startsWith(route.path) && method === route.method)) {
-      logger.log('info', { openRoutes });
+      logger.log('info', 'Route ouverte');
       return res.status(200).json({
         message: 'Accès autorisé',
       });
