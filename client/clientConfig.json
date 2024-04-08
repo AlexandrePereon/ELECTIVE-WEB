@@ -1,6 +1,6 @@
 {
-    "restaurantURL": "elective-web-restaurant",
-    "restaurantPORT": "3002",
-    "restaurantPREFIX": "/restaurant",
-    "restaurantGetByCreatorId": "/creator"
+  "restaurantURL": "elective-web-restaurant",
+  "restaurantPORT": "3002",
+  "restaurantPREFIX": "/api-restaurant",
+  "restaurantGetByCreatorId": "/creator"
 }
