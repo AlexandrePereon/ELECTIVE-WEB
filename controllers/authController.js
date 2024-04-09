@@ -13,6 +13,12 @@ import logger from '../utils/logger/logger.js';
 const authController = {
   // POST /api-auth/register
   register: async (req, res) => {
+    if (!req.body || !req.body.firstName || !req.body.lastName || !req.body.email || !req.body.password) {
+      return res.status(400).json({
+        message: 'Informations manquantes',
+      });
+    }
+
     // check if username or email already exists
     const userExists = await User.findOne({
       where: { email: req.body.email },
