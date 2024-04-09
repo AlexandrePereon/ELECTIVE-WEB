@@ -240,7 +240,7 @@ const authController = {
   update: async (req, res) => {
     let { userId } = req.body;
     const {
-      firstName, lastName, email, currentPassword, newPassword,
+      firstName, lastName, email, currentPassword, newPassword, partnerCode,
     } = req.body;
 
     if (req.body.userData.role === 'marketing') {
@@ -278,6 +278,18 @@ const authController = {
         });
       }
       user.password = await bcrypt.hash(newPassword, 10);
+    }
+
+    if (partnerCode) {
+      // Check if the partner code is not already used
+      const partner = await User.findOne({ where: { partnerCode } });
+
+      if (partner) {
+        return res.status(400).json({
+          message: 'Code de parrainage déjà utilisé',
+        });
+      }
+      user.partnerCode = partnerCode;
     }
 
     await user.save();
