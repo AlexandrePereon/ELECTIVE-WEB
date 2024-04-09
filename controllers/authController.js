@@ -66,7 +66,7 @@ const authController = {
 
     try {
       await user.save();
-      logger.log('info', 'Utilisateur enregistré', { userID: user.id });
+      logger.log('connection', 'Utilisateur enregistré', { userID: user.id });
       return res.status(200).json({ id: user.id, message: 'Votre compte a été créé' });
     } catch (err) {
       return res.status(400).json({ message: err });
@@ -74,11 +74,12 @@ const authController = {
   },
   // POST /api-auth/login
   login: async (req, res) => {
-    logger.log('info', 'Demande de connexion', { userEmail: req.body.email });
+    logger.log('connection', 'Demande de connexion', { userEmail: req.body.email });
     // check if username exists
     const user = await User.findOne({ where: { email: req.body.email } });
 
     if (!user) {
+      logger.log('connection', 'Utilisateur non trouvé', { userEmail: req.body.email });
       return res.status(400).json({
         message: 'Email ou mot de passe incorrect',
       });
@@ -86,6 +87,7 @@ const authController = {
 
     // check if user is blocked
     if (user.isBlocked) {
+      logger.log('connection', 'Utilisateur bloqué', { userID: user.id });
       return res.status(400).json({
         message: 'Votre compte a été bloqué',
       });
@@ -95,6 +97,7 @@ const authController = {
     const validPassword = await bcrypt.compare(req.body.password, user.password);
 
     if (!validPassword) {
+      logger.log('connection', 'Mot de passe incorrect', { userID: user.id });
       return res.status(400).json({
         message: 'Email ou mot de passe incorrect',
       });
@@ -114,6 +117,7 @@ const authController = {
     user.lastLogin = new Date();
     await user.save();
 
+    logger.log('connection', 'Connexion réussie', { userID: user.id });
     return res.header('auth-token', token).json({
       token,
       refreshToken,
@@ -151,7 +155,7 @@ const authController = {
     const token = bearerToken ? bearerToken.replace('Bearer ', '') : null;
 
     if (!token) {
-      logger.log('info', 'Token non fourni');
+      logger.log('connection', 'Token non fourni');
       return res.status(401).json({
         message: 'Accès refusé',
       });
@@ -166,7 +170,7 @@ const authController = {
 
       // check if user is blocked
       if (user.isBlocked) {
-        logger.log('info', 'Utilisateur bloqué', { userID: user.id });
+        logger.log('connection', 'Utilisateur bloqué', { userID: user.id });
         return res.status(401).json({
           message: 'Votre compte a été bloqué',
         });
@@ -185,11 +189,11 @@ const authController = {
 
       // Add user information to the header
       res.setHeader('X-User', JSON.stringify(userHeader));
-      logger.log('info', 'Utilisateur vérifié', { userID: user.id });
+      logger.log('connection', 'Utilisateur vérifié', { userID: user.id });
 
       return res.status(200).json(verified);
     } catch (err) {
-      logger.log('info', 'Token invalide', { error: err });
+      logger.log('connection', 'Token invalide', { error: err });
       return res.status(401).json({
         message: 'Token invalide',
       });
