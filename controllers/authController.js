@@ -372,6 +372,21 @@ const authController = {
     await user.destroy();
     return res.status(200).send({ message: 'Utilisateur supprimé' });
   },
+
+  // GET /api-auth/restaurant
+  updateRestaurant: async (req, res) => {
+    const { id } = req.body.userData;
+
+    const user = await User.findByPk(id);
+    if (!user) return res.status(404).send({ error: 'Utilisateur non trouvé.' });
+
+    logger.log('info', 'Récupération restaurant', { userID: user.id });
+    const restaurant = await restaurantClient.getRestaurantByCreatorId(user.id);
+    user.restaurant = restaurant ? restaurant._id : null;
+
+    await user.save();
+    return res.status(200).send({ message: 'Restaurant mis à jour' });
+  },
 };
 
 export default authController;
