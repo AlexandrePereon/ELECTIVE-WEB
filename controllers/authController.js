@@ -284,7 +284,7 @@ const authController = {
       // Check if the partner code is not already used
       const partner = await User.findOne({ where: { partnerCode } });
 
-      if (partner) {
+      if (partner && partner.id !== user.id) {
         return res.status(400).json({
           message: 'Code de parrainage déjà utilisé',
         });
